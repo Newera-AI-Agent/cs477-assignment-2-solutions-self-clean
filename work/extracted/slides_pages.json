@@ -1,0 +1,1249 @@
+{
+  "pdf": "CS477 (6-13).pdf",
+  "page_count": 207,
+  "pages": [
+    {
+      "page": 1,
+      "chars": 78,
+      "images": 3,
+      "drawings": 1
+    },
+    {
+      "page": 2,
+      "chars": 680,
+      "images": 0,
+      "drawings": 12
+    },
+    {
+      "page": 3,
+      "chars": 532,
+      "images": 0,
+      "drawings": 1
+    },
+    {
+      "page": 4,
+      "chars": 29,
+      "images": 1,
+      "drawings": 1
+    },
+    {
+      "page": 5,
+      "chars": 474,
+      "images": 0,
+      "drawings": 1
+    },
+    {
+      "page": 6,
+      "chars": 349,
+      "images": 0,
+      "drawings": 1
+    },
+    {
+      "page": 7,
+      "chars": 436,
+      "images": 0,
+      "drawings": 12
+    },
+    {
+      "page": 8,
+      "chars": 340,
+      "images": 1,
+      "drawings": 1
+    },
+    {
+      "page": 9,
+      "chars": 361,
+      "images": 0,
+      "drawings": 3
+    },
+    {
+      "page": 10,
+      "chars": 554,
+      "images": 0,
+      "drawings": 1
+    },
+    {
+      "page": 11,
+      "chars": 318,
+      "images": 0,
+      "drawings": 1
+    },
+    {
+      "page": 12,
+      "chars": 465,
+      "images": 0,
+      "drawings": 1
+    },
+    {
+      "page": 13,
+      "chars": 572,
+      "images": 0,
+      "drawings": 1
+    },
+    {
+      "page": 14,
+      "chars": 555,
+      "images": 0,
+      "drawings": 1
+    },
+    {
+      "page": 15,
+      "chars": 115,
+      "images": 1,
+      "drawings": 1
+    },
+    {
+      "page": 16,
+      "chars": 475,
+      "images": 1,
+      "drawings": 1
+    },
+    {
+      "page": 17,
+      "chars": 245,
+      "images": 1,
+      "drawings": 1
+    },
+    {
+      "page": 18,
+      "chars": 306,
+      "images": 1,
+      "drawings": 2
+    },
+    {
+      "page": 19,
+      "chars": 431,
+      "images": 1,
+      "drawings": 5
+    },
+    {
+      "page": 20,
+      "chars": 541,
+      "images": 0,
+      "drawings": 1
+    },
+    {
+      "page": 21,
+      "chars": 275,
+      "images": 0,
+      "drawings": 1
+    },
+    {
+      "page": 22,
+      "chars": 498,
+      "images": 0,
+      "drawings": 1
+    },
+    {
+      "page": 23,
+      "chars": 106,
+      "images": 2,
+      "drawings": 2
+    },
+    {
+      "page": 24,
+      "chars": 499,
+      "images": 0,
+      "drawings": 3
+    },
+    {
+      "page": 25,
+      "chars": 79,
+      "images": 3,
+      "drawings": 1
+    },
+    {
+      "page": 26,
+      "chars": 413,
+      "images": 4,
+      "drawings": 2
+    },
+    {
+      "page": 27,
+      "chars": 648,
+      "images": 0,
+      "drawings": 1
+    },
+    {
+      "page": 28,
+      "chars": 608,
+      "images": 0,
+      "drawings": 1
+    },
+    {
+      "page": 29,
+      "chars": 539,
+      "images": 0,
+      "drawings": 1
+    },
+    {
+      "page": 30,
+      "chars": 95,
+      "images": 2,
+      "drawings": 2
+    },
+    {
+      "page": 31,
+      "chars": 84,
+      "images": 1,
+      "drawings": 1
+    },
+    {
+      "page": 32,
+      "chars": 303,
+      "images": 0,
+      "drawings": 15
+    },
+    {
+      "page": 33,
+      "chars": 439,
+      "images": 0,
+      "drawings": 1
+    },
+    {
+      "page": 34,
+      "chars": 180,
+      "images": 3,
+      "drawings": 2
+    },
+    {
+      "page": 35,
+      "chars": 238,
+      "images": 1,
+      "drawings": 1
+    },
+    {
+      "page": 36,
+      "chars": 409,
+      "images": 0,
+      "drawings": 1
+    },
+    {
+      "page": 37,
+      "chars": 389,
+      "images": 1,
+      "drawings": 1
+    },
+    {
+      "page": 38,
+      "chars": 458,
+      "images": 0,
+      "drawings": 1
+    },
+    {
+      "page": 39,
+      "chars": 60,
+      "images": 1,
+      "drawings": 1
+    },
+    {
+      "page": 40,
+      "chars": 71,
+      "images": 2,
+      "drawings": 1
+    },
+    {
+      "page": 41,
+      "chars": 605,
+      "images": 0,
+      "drawings": 2
+    },
+    {
+      "page": 42,
+      "chars": 550,
+      "images": 0,
+      "drawings": 1
+    },
+    {
+      "page": 43,
+      "chars": 187,
+      "images": 0,
+      "drawings": 1
+    },
+    {
+      "page": 44,
+      "chars": 317,
+      "images": 0,
+      "drawings": 1
+    },
+    {
+      "page": 45,
+      "chars": 460,
+      "images": 2,
+      "drawings": 2
+    },
+    {
+      "page": 46,
+      "chars": 414,
+      "images": 0,
+      "drawings": 1
+    },
+    {
+      "page": 47,
+      "chars": 342,
+      "images": 1,
+      "drawings": 1
+    },
+    {
+      "page": 48,
+      "chars": 455,
+      "images": 0,
+      "drawings": 1
+    },
+    {
+      "page": 49,
+      "chars": 350,
+      "images": 0,
+      "drawings": 1
+    },
+    {
+      "page": 50,
+      "chars": 275,
+      "images": 0,
+      "drawings": 1
+    },
+    {
+      "page": 51,
+      "chars": 200,
+      "images": 3,
+      "drawings": 3
+    },
+    {
+      "page": 52,
+      "chars": 666,
+      "images": 0,
+      "drawings": 1
+    },
+    {
+      "page": 53,
+      "chars": 68,
+      "images": 3,
+      "drawings": 1
+    },
+    {
+      "page": 54,
+      "chars": 401,
+      "images": 0,
+      "drawings": 1
+    },
+    {
+      "page": 55,
+      "chars": 343,
+      "images": 0,
+      "drawings": 1
+    },
+    {
+      "page": 56,
+      "chars": 272,
+      "images": 0,
+      "drawings": 1
+    },
+    {
+      "page": 57,
+      "chars": 339,
+      "images": 0,
+      "drawings": 1
+    },
+    {
+      "page": 58,
+      "chars": 341,
+      "images": 0,
+      "drawings": 1
+    },
+    {
+      "page": 59,
+      "chars": 440,
+      "images": 0,
+      "drawings": 1
+    },
+    {
+      "page": 60,
+      "chars": 145,
+      "images": 0,
+      "drawings": 1
+    },
+    {
+      "page": 61,
+      "chars": 390,
+      "images": 0,
+      "drawings": 1
+    },
+    {
+      "page": 62,
+      "chars": 366,
+      "images": 0,
+      "drawings": 4
+    },
+    {
+      "page": 63,
+      "chars": 421,
+      "images": 1,
+      "drawings": 4
+    },
+    {
+      "page": 64,
+      "chars": 100,
+      "images": 2,
+      "drawings": 3
+    },
+    {
+      "page": 65,
+      "chars": 457,
+      "images": 0,
+      "drawings": 3
+    },
+    {
+      "page": 66,
+      "chars": 443,
+      "images": 0,
+      "drawings": 2
+    },
+    {
+      "page": 67,
+      "chars": 573,
+      "images": 1,
+      "drawings": 4
+    },
+    {
+      "page": 68,
+      "chars": 397,
+      "images": 1,
+      "drawings": 4
+    },
+    {
+      "page": 69,
+      "chars": 525,
+      "images": 0,
+      "drawings": 1
+    },
+    {
+      "page": 70,
+      "chars": 507,
+      "images": 1,
+      "drawings": 1
+    },
+    {
+      "page": 71,
+      "chars": 336,
+      "images": 1,
+      "drawings": 1
+    },
+    {
+      "page": 72,
+      "chars": 213,
+      "images": 1,
+      "drawings": 1
+    },
+    {
+      "page": 73,
+      "chars": 318,
+      "images": 2,
+      "drawings": 1
+    },
+    {
+      "page": 74,
+      "chars": 382,
+      "images": 2,
+      "drawings": 1
+    },
+    {
+      "page": 75,
+      "chars": 304,
+      "images": 1,
+      "drawings": 1
+    },
+    {
+      "page": 76,
+      "chars": 376,
+      "images": 2,
+      "drawings": 1
+    },
+    {
+      "page": 77,
+      "chars": 477,
+      "images": 2,
+      "drawings": 2
+    },
+    {
+      "page": 78,
+      "chars": 69,
+      "images": 4,
+      "drawings": 1
+    },
+    {
+      "page": 79,
+      "chars": 443,
+      "images": 0,
+      "drawings": 1
+    },
+    {
+      "page": 80,
+      "chars": 394,
+      "images": 0,
+      "drawings": 1
+    },
+    {
+      "page": 81,
+      "chars": 372,
+      "images": 1,
+      "drawings": 2
+    },
+    {
+      "page": 82,
+      "chars": 297,
+      "images": 1,
+      "drawings": 1
+    },
+    {
+      "page": 83,
+      "chars": 303,
+      "images": 0,
+      "drawings": 1
+    },
+    {
+      "page": 84,
+      "chars": 364,
+      "images": 1,
+      "drawings": 1
+    },
+    {
+      "page": 85,
+      "chars": 493,
+      "images": 1,
+      "drawings": 1
+    },
+    {
+      "page": 86,
+      "chars": 218,
+      "images": 1,
+      "drawings": 1
+    },
+    {
+      "page": 87,
+      "chars": 252,
+      "images": 2,
+      "drawings": 1
+    },
+    {
+      "page": 88,
+      "chars": 325,
+      "images": 1,
+      "drawings": 1
+    },
+    {
+      "page": 89,
+      "chars": 369,
+      "images": 1,
+      "drawings": 1
+    },
+    {
+      "page": 90,
+      "chars": 394,
+      "images": 1,
+      "drawings": 1
+    },
+    {
+      "page": 91,
+      "chars": 278,
+      "images": 1,
+      "drawings": 1
+    },
+    {
+      "page": 92,
+      "chars": 65,
+      "images": 1,
+      "drawings": 1
+    },
+    {
+      "page": 93,
+      "chars": 512,
+      "images": 0,
+      "drawings": 1
+    },
+    {
+      "page": 94,
+      "chars": 355,
+      "images": 0,
+      "drawings": 1
+    },
+    {
+      "page": 95,
+      "chars": 453,
+      "images": 0,
+      "drawings": 1
+    },
+    {
+      "page": 96,
+      "chars": 517,
+      "images": 1,
+      "drawings": 1
+    },
+    {
+      "page": 97,
+      "chars": 263,
+      "images": 0,
+      "drawings": 1
+    },
+    {
+      "page": 98,
+      "chars": 298,
+      "images": 0,
+      "drawings": 1
+    },
+    {
+      "page": 99,
+      "chars": 65,
+      "images": 3,
+      "drawings": 1
+    },
+    {
+      "page": 100,
+      "chars": 386,
+      "images": 0,
+      "drawings": 7
+    },
+    {
+      "page": 101,
+      "chars": 563,
+      "images": 0,
+      "drawings": 1
+    },
+    {
+      "page": 102,
+      "chars": 338,
+      "images": 1,
+      "drawings": 1
+    },
+    {
+      "page": 103,
+      "chars": 477,
+      "images": 0,
+      "drawings": 1
+    },
+    {
+      "page": 104,
+      "chars": 388,
+      "images": 0,
+      "drawings": 1
+    },
+    {
+      "page": 105,
+      "chars": 37,
+      "images": 1,
+      "drawings": 1
+    },
+    {
+      "page": 106,
+      "chars": 554,
+      "images": 0,
+      "drawings": 1
+    },
+    {
+      "page": 107,
+      "chars": 430,
+      "images": 1,
+      "drawings": 1
+    },
+    {
+      "page": 108,
+      "chars": 422,
+      "images": 0,
+      "drawings": 1
+    },
+    {
+      "page": 109,
+      "chars": 676,
+      "images": 0,
+      "drawings": 1
+    },
+    {
+      "page": 110,
+      "chars": 268,
+      "images": 1,
+      "drawings": 2
+    },
+    {
+      "page": 111,
+      "chars": 55,
+      "images": 7,
+      "drawings": 1
+    },
+    {
+      "page": 112,
+      "chars": 513,
+      "images": 0,
+      "drawings": 1
+    },
+    {
+      "page": 113,
+      "chars": 176,
+      "images": 1,
+      "drawings": 1
+    },
+    {
+      "page": 114,
+      "chars": 808,
+      "images": 0,
+      "drawings": 1
+    },
+    {
+      "page": 115,
+      "chars": 330,
+      "images": 0,
+      "drawings": 1
+    },
+    {
+      "page": 116,
+      "chars": 99,
+      "images": 1,
+      "drawings": 1
+    },
+    {
+      "page": 117,
+      "chars": 344,
+      "images": 1,
+      "drawings": 1
+    },
+    {
+      "page": 118,
+      "chars": 116,
+      "images": 1,
+      "drawings": 1
+    },
+    {
+      "page": 119,
+      "chars": 659,
+      "images": 0,
+      "drawings": 1
+    },
+    {
+      "page": 120,
+      "chars": 369,
+      "images": 1,
+      "drawings": 1
+    },
+    {
+      "page": 121,
+      "chars": 69,
+      "images": 2,
+      "drawings": 1
+    },
+    {
+      "page": 122,
+      "chars": 750,
+      "images": 0,
+      "drawings": 1
+    },
+    {
+      "page": 123,
+      "chars": 768,
+      "images": 0,
+      "drawings": 1
+    },
+    {
+      "page": 124,
+      "chars": 479,
+      "images": 0,
+      "drawings": 1
+    },
+    {
+      "page": 125,
+      "chars": 533,
+      "images": 0,
+      "drawings": 1
+    },
+    {
+      "page": 126,
+      "chars": 674,
+      "images": 0,
+      "drawings": 1
+    },
+    {
+      "page": 127,
+      "chars": 679,
+      "images": 0,
+      "drawings": 1
+    },
+    {
+      "page": 128,
+      "chars": 779,
+      "images": 0,
+      "drawings": 1
+    },
+    {
+      "page": 129,
+      "chars": 774,
+      "images": 0,
+      "drawings": 1
+    },
+    {
+      "page": 130,
+      "chars": 629,
+      "images": 4,
+      "drawings": 5
+    },
+    {
+      "page": 131,
+      "chars": 756,
+      "images": 0,
+      "drawings": 11
+    },
+    {
+      "page": 132,
+      "chars": 684,
+      "images": 0,
+      "drawings": 8
+    },
+    {
+      "page": 133,
+      "chars": 808,
+      "images": 0,
+      "drawings": 1
+    },
+    {
+      "page": 134,
+      "chars": 105,
+      "images": 1,
+      "drawings": 1
+    },
+    {
+      "page": 135,
+      "chars": 731,
+      "images": 0,
+      "drawings": 1
+    },
+    {
+      "page": 136,
+      "chars": 501,
+      "images": 0,
+      "drawings": 1
+    },
+    {
+      "page": 137,
+      "chars": 706,
+      "images": 0,
+      "drawings": 1
+    },
+    {
+      "page": 138,
+      "chars": 567,
+      "images": 0,
+      "drawings": 1
+    },
+    {
+      "page": 139,
+      "chars": 505,
+      "images": 0,
+      "drawings": 1
+    },
+    {
+      "page": 140,
+      "chars": 505,
+      "images": 0,
+      "drawings": 4
+    },
+    {
+      "page": 141,
+      "chars": 424,
+      "images": 0,
+      "drawings": 1
+    },
+    {
+      "page": 142,
+      "chars": 786,
+      "images": 0,
+      "drawings": 2
+    },
+    {
+      "page": 143,
+      "chars": 562,
+      "images": 0,
+      "drawings": 1
+    },
+    {
+      "page": 144,
+      "chars": 562,
+      "images": 0,
+      "drawings": 1
+    },
+    {
+      "page": 145,
+      "chars": 693,
+      "images": 0,
+      "drawings": 1
+    },
+    {
+      "page": 146,
+      "chars": 286,
+      "images": 1,
+      "drawings": 1
+    },
+    {
+      "page": 147,
+      "chars": 481,
+      "images": 1,
+      "drawings": 1
+    },
+    {
+      "page": 148,
+      "chars": 71,
+      "images": 3,
+      "drawings": 1
+    },
+    {
+      "page": 149,
+      "chars": 289,
+      "images": 0,
+      "drawings": 1
+    },
+    {
+      "page": 150,
+      "chars": 394,
+      "images": 0,
+      "drawings": 1
+    },
+    {
+      "page": 151,
+      "chars": 214,
+      "images": 0,
+      "drawings": 1
+    },
+    {
+      "page": 152,
+      "chars": 309,
+      "images": 1,
+      "drawings": 1
+    },
+    {
+      "page": 153,
+      "chars": 210,
+      "images": 1,
+      "drawings": 1
+    },
+    {
+      "page": 154,
+      "chars": 405,
+      "images": 0,
+      "drawings": 1
+    },
+    {
+      "page": 155,
+      "chars": 808,
+      "images": 1,
+      "drawings": 1
+    },
+    {
+      "page": 156,
+      "chars": 732,
+      "images": 0,
+      "drawings": 1
+    },
+    {
+      "page": 157,
+      "chars": 38,
+      "images": 1,
+      "drawings": 1
+    },
+    {
+      "page": 158,
+      "chars": 613,
+      "images": 0,
+      "drawings": 1
+    },
+    {
+      "page": 159,
+      "chars": 605,
+      "images": 1,
+      "drawings": 1
+    },
+    {
+      "page": 160,
+      "chars": 605,
+      "images": 1,
+      "drawings": 1
+    },
+    {
+      "page": 161,
+      "chars": 316,
+      "images": 1,
+      "drawings": 4
+    },
+    {
+      "page": 162,
+      "chars": 462,
+      "images": 0,
+      "drawings": 1
+    },
+    {
+      "page": 163,
+      "chars": 399,
+      "images": 0,
+      "drawings": 2
+    },
+    {
+      "page": 164,
+      "chars": 532,
+      "images": 0,
+      "drawings": 3
+    },
+    {
+      "page": 165,
+      "chars": 499,
+      "images": 0,
+      "drawings": 2
+    },
+    {
+      "page": 166,
+      "chars": 416,
+      "images": 0,
+      "drawings": 1
+    },
+    {
+      "page": 167,
+      "chars": 509,
+      "images": 0,
+      "drawings": 1
+    },
+    {
+      "page": 168,
+      "chars": 705,
+      "images": 0,
+      "drawings": 1
+    },
+    {
+      "page": 169,
+      "chars": 765,
+      "images": 0,
+      "drawings": 4
+    },
+    {
+      "page": 170,
+      "chars": 40,
+      "images": 1,
+      "drawings": 1
+    },
+    {
+      "page": 171,
+      "chars": 575,
+      "images": 0,
+      "drawings": 1
+    },
+    {
+      "page": 172,
+      "chars": 528,
+      "images": 0,
+      "drawings": 1
+    },
+    {
+      "page": 173,
+      "chars": 834,
+      "images": 0,
+      "drawings": 1
+    },
+    {
+      "page": 174,
+      "chars": 354,
+      "images": 1,
+      "drawings": 1
+    },
+    {
+      "page": 175,
+      "chars": 496,
+      "images": 0,
+      "drawings": 1
+    },
+    {
+      "page": 176,
+      "chars": 566,
+      "images": 0,
+      "drawings": 1
+    },
+    {
+      "page": 177,
+      "chars": 401,
+      "images": 0,
+      "drawings": 1
+    },
+    {
+      "page": 178,
+      "chars": 70,
+      "images": 3,
+      "drawings": 1
+    },
+    {
+      "page": 179,
+      "chars": 567,
+      "images": 1,
+      "drawings": 1
+    },
+    {
+      "page": 180,
+      "chars": 246,
+      "images": 1,
+      "drawings": 1
+    },
+    {
+      "page": 181,
+      "chars": 636,
+      "images": 6,
+      "drawings": 1
+    },
+    {
+      "page": 182,
+      "chars": 465,
+      "images": 2,
+      "drawings": 2
+    },
+    {
+      "page": 183,
+      "chars": 644,
+      "images": 0,
+      "drawings": 1
+    },
+    {
+      "page": 184,
+      "chars": 511,
+      "images": 1,
+      "drawings": 1
+    },
+    {
+      "page": 185,
+      "chars": 733,
+      "images": 0,
+      "drawings": 1
+    },
+    {
+      "page": 186,
+      "chars": 730,
+      "images": 0,
+      "drawings": 1
+    },
+    {
+      "page": 187,
+      "chars": 740,
+      "images": 0,
+      "drawings": 1
+    },
+    {
+      "page": 188,
+      "chars": 616,
+      "images": 0,
+      "drawings": 1
+    },
+    {
+      "page": 189,
+      "chars": 647,
+      "images": 0,
+      "drawings": 1
+    },
+    {
+      "page": 190,
+      "chars": 590,
+      "images": 1,
+      "drawings": 2
+    },
+    {
+      "page": 191,
+      "chars": 354,
+      "images": 2,
+      "drawings": 1
+    },
+    {
+      "page": 192,
+      "chars": 464,
+      "images": 2,
+      "drawings": 1
+    },
+    {
+      "page": 193,
+      "chars": 610,
+      "images": 0,
+      "drawings": 1
+    },
+    {
+      "page": 194,
+      "chars": 734,
+      "images": 0,
+      "drawings": 1
+    },
+    {
+      "page": 195,
+      "chars": 893,
+      "images": 0,
+      "drawings": 1
+    },
+    {
+      "page": 196,
+      "chars": 569,
+      "images": 0,
+      "drawings": 1
+    },
+    {
+      "page": 197,
+      "chars": 640,
+      "images": 0,
+      "drawings": 1
+    },
+    {
+      "page": 198,
+      "chars": 476,
+      "images": 1,
+      "drawings": 1
+    },
+    {
+      "page": 199,
+      "chars": 535,
+      "images": 0,
+      "drawings": 1
+    },
+    {
+      "page": 200,
+      "chars": 435,
+      "images": 2,
+      "drawings": 1
+    },
+    {
+      "page": 201,
+      "chars": 391,
+      "images": 1,
+      "drawings": 1
+    },
+    {
+      "page": 202,
+      "chars": 355,
+      "images": 0,
+      "drawings": 1
+    },
+    {
+      "page": 203,
+      "chars": 611,
+      "images": 0,
+      "drawings": 1
+    },
+    {
+      "page": 204,
+      "chars": 731,
+      "images": 0,
+      "drawings": 1
+    },
+    {
+      "page": 205,
+      "chars": 608,
+      "images": 1,
+      "drawings": 1
+    },
+    {
+      "page": 206,
+      "chars": 480,
+      "images": 1,
+      "drawings": 1
+    },
+    {
+      "page": 207,
+      "chars": 26,
+      "images": 2,
+      "drawings": 1
+    }
+  ],
+  "low_text_pages": []
+}

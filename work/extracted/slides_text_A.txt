@@ -1,0 +1,1252 @@
+# SOURCE FILE: CS477 (6-13).pdf
+# PAGES: 207
+
+===== [PAGE 1] =====
+Restricted -مقيد
+CS477: Compiler Design
+Module 6
+Intermediate Representation I
+
+===== [PAGE 2] =====
+Restricted -مقيد
+Intermediate Representations (IR)
+•
+Most
+production
+compilers
+make
+use
+of
+an
+intermediate
+representation (IR) that lies between the abstract structure of the
+source language and the concrete structure of the target (assembly)
+language.
+•
+An IR is designed to have a simple and regular structure that facilitates
+optimization, analysis, and efficient code generation.
+•
+A modular compiler often implements each optimization or analysis
+tool as a separate module that consumes and produces the same IR
+•
+So that it is easy to select and compose optimizations in different orders.
+Parser
+Static
+Checker
+Intermediate 
+Code Generator
+Code 
+Generator
+Front end
+Back end
+
+===== [PAGE 3] =====
+Restricted -مقيد
+Why IR?
+• While generating machine code directly from source code is possible, it 
+entails two problems.
+• With m languages and n target machines, we need to write m front 
+ends, m×n optimizers, and m×n code generators.
+– The code optimizer which is one of the largest and very-difficult-to-write 
+components of a compiler, cannot be reused. 
+• By converting source code to an intermediate code, a machine-
+independent code optimizer may be written 
+– This means just m front ends, n code generators and 1 optimizer
+
+===== [PAGE 4] =====
+Restricted -مقيد
+Why IM Code?
+
+===== [PAGE 5] =====
+Restricted -مقيد
+Different Types of IR
+• Intermediate code must be easy to produce and easy to translate to 
+machine code.
+• A sort of universal assembly language, should not contain any machine-specific 
+parameters (registers, addresses, etc.)
+• The type of intermediate code deployed is based on the application
+• Quadruples, triples, indirect triples, abstract syntax trees are the classical 
+forms used for machine-independent optimizations and machine code 
+generation.
+
+===== [PAGE 6] =====
+Restricted -مقيد
+Different Types of IR
+• Static Single Assignment form (SSA) is a recent form and enables more 
+effective optimizations 
+• Conditional constant propagation and global value numbering are more 
+effective on SSA Program .
+• Dependence Graph (PDG) is useful in automatic parallelization, 
+instruction scheduling, and software pipelining
+
+===== [PAGE 7] =====
+Restricted -مقيد
+Introduction
+• Intermediate code is the interface between front end and back end in 
+a compiler
+• Ideally, the details of source language are confined to the front end 
+and the details of target machines to the back end (a m×n model)
+• We now study intermediate representations, static type checking and 
+intermediate code generation
+Parser
+Static
+Checker
+Intermediate 
+Code Generator
+Code 
+Generator
+Front end
+Back end
+
+===== [PAGE 8] =====
+Restricted -مقيد
+Overview
+• Intermediate representations span the gap between the source and target 
+languages:
+• closer to target language;
+• (more or less) machine independent;
+• allows many optimizations to be done in a machine-independent way.
+• Implementable via syntax directed translation, so can be folded into the 
+parsing process.
+
+===== [PAGE 9] =====
+Restricted -مقيد
+Types of Intermediate Languages
+• High Level Representations (e.g., syntax trees):
+– closer to the source language
+– easy to generate from an input program
+– code optimizations may not be straightforward.
+• Low Level Representations (e.g., 3-address code, RTL):
+– closer to the target machine;
+– easier for optimizations, final code generation;
+
+===== [PAGE 10] =====
+Restricted -مقيد
+IR Structure
+• An IR is designed to have a simple and regular structure that facilitates 
+optimization, analysis, and efficient code generation.
+• It is common for an IR to have a defined external format that can be 
+written out to a file in text form, so that it can be exchanged between 
+unrelated tools
+• Although it may be visible to the determined programmer, it usually 
+isn’t meant to be easily readable. 
+• When loaded into memory, the IR is represented as a data structure, 
+to facilitate algorithms that traverse its structure.
+
+===== [PAGE 11] =====
+Restricted -مقيد
+IR Structure
+• There are many different kinds of IR that can be used; 
+• Some are very close to the AST we used up to this point, while others 
+are only a very short distance from the target assembly language.
+• We will examine different approaches to IRs and consider their 
+strengths and weaknesses.
+
+===== [PAGE 12] =====
+Restricted -مقيد
+Abstract Syntax Tree
+• AST  can be a usable IR, if the goal is simply to emit assembly language 
+without a great deal of optimization or other transformations
+• Once type-checking is complete, simple optimizations like strength 
+reduction and constant folding can be applied to the AST itself.
+• Then, to generate assembly language, simply perform a post-order 
+traversal of the AST and emit a few assembly instructions 
+corresponding to each node. 
+
+===== [PAGE 13] =====
+Restricted -مقيد
+Abstract Syntax Tree
+• However, in a production compiler, the AST isn’t a great choice for IR, 
+mainly because the structure is too rich. 
+• Each node has a large number of different options and substructure: 
+– for example, an addition node could represent an integer addition, a floating 
+point addition, a Boolean-or, or a string concatenation, depending on the types 
+of the values involved. 
+• This makes it difficult to perform robust transformations, as well as to 
+generate an external representation. 
+• A more low-level representation is needed.
+
+===== [PAGE 14] =====
+Restricted -مقيد
+Directed Acyclic Graph
+• The directed acyclic graph (DAG) is one step simplified from the AST.
+• A DAG is similar to the AST, except that it can have an arbitrary graph
+structure, and the individual nodes are greatly simplified, so that there
+is little or no auxiliary information beyond the type and value of each
+node.
+• This requires that we have a greater number of node types, each one
+explicit about its purpose.
+• For example, Figure 8.1 shows a definition of a DAG data structure that
+would be compatible with our project compiler
+
+===== [PAGE 15] =====
+Restricted -مقيد
+Directed Acyclic Graph
+• A definition of a DAG data structure
+compatible with the project compiler
+
+===== [PAGE 16] =====
+Restricted -مقيد
+Directed Acyclic Graph
+•
+Now suppose we compile a simple expression like x=(a+10)*(a+10). 
+•
+The AST representation of this expression would directly capture the 
+syntactic structure
+• After performing type-checking, we may 
+learn that a is a floating point value, and 
+thus 10 must be converted to a float prior 
+to performing floating point arithmetic. 
+• In addition, the computation a+10 need 
+only be performed once, and the resulting 
+value used twice.
+
+===== [PAGE 17] =====
+Restricted -مقيد
+Directed Acyclic Graph
+• All of that can be represented with the 
+following DAG, 
+– It introduces a new type of node ITOF to perform 
+integer-to-float conversion, and 
+– nodes FADD and FMUL to perform floating point 
+arithmetic:
+
+===== [PAGE 18] =====
+Restricted -مقيد
+Directed Acyclic Graph
+• It is also common for a DAG to represent address 
+computations related to pointers and arrays in greater detail, so 
+that they can be shared and optimized, where possible. 
+• For example, the array lookup x=a[i] would have a very simple 
+representation in the AST:
+
+===== [PAGE 19] =====
+Restricted -مقيد
+Directed Acyclic Graph
+• However, array lookup is actually accomplished 
+by adding the starting address of the array a
+with the index of the item i multiplied by the 
+size of objects in the array, determined by 
+consulting the symbol table. 
+• This could be expressed in a DAG like this:
+• As a final step before code generation, the DAG might 
+be expanded to include the address computations for 
+local variables. 
+
+===== [PAGE 20] =====
+Restricted -مقيد
+Control Flow Graph
+• It is important to note that a DAG by itself is suitable for encoding 
+expressions, but it isn’t as effective for control flow or other ordered 
+program structures.
+• Common sub-expressions are combined under the assumption that they 
+can be evaluated in any order (consistent with operator precedence) 
+and the values already in the DAG do not change. 
+• This assumption does not hold when we consider multiple statements 
+that modify values, or control flow structures that repeat or skip 
+statements.
+
+===== [PAGE 21] =====
+Restricted -مقيد
+Attribute Flow
+• Context-free grammars are not tied to a specific parsing order
+– e.g. Recursive descent, LR parsing
+• Attribute grammars are not tied to a specific evaluation order
+– This evaluation is known as the annotation or decoration of the parse tree
+
+===== [PAGE 22] =====
+Restricted -مقيد
+Control Flow Graph
+• A control flow graph represents the higher-level structure of the 
+program. 
+• The control flow graph is a directed graph (possibly cyclic) where each 
+node of the graph consists of a basic block of sequential statements. 
+• The edges of the graph represent the possible flows of control 
+between basic blocks. 
+• A conditional construct (like if or switch) results in branches in the 
+graph, while a loop construct (like for or while) results in reverse edges
+
+===== [PAGE 23] =====
+Restricted -مقيد
+For example, this bit of code
+Would result in this control 
+flow graph
+Control Flow Graph
+
+===== [PAGE 24] =====
+Restricted -مقيد
+Control Flow Graph
+• Note that the control flow graph has a different structure than the AST. 
+• The AST for a for-loop would have each of the control expressions as an 
+immediate child of the loop node, whereas the control flow graph places 
+each one in the order it would be executed in practice. 
+• Likewise, the if-statement has edges from each branch of the conditional 
+to the following node, so that one can easily trace the flow of execution 
+from one component to the next.
+
+===== [PAGE 25] =====
+Restricted -مقيد
+CS477: Compiler Design
+Module 7
+Intermediate Representation II
+
+===== [PAGE 26] =====
+Restricted -مقيد
+Control Flow Graph (CFG)
+•
+A Control Flow Graph (CFG) is the graphical representation of control
+flow or computation during the execution of programs or applications.
+•
+Control flow graphs are mostly used in static analysis as well as
+compiler applications, as they can accurately represent the flow inside
+of a program unit.
+•
+The control flow graph was originally developed by Frances E. Allen.
+
+===== [PAGE 27] =====
+Restricted -مقيد
+Control Flow Graph (CFG)
+• It is important to note that a DAG by itself is suitable for encoding
+expressions, but it is not as effective for control flow or other ordered
+program structures.
+• Common sub-expressions are combined under the assumption that
+they can be evaluated in any order (consistent with operator
+precedence) and the values already in the DAG do not change.
+• To reflect this, we can use a control flow graph to represent the
+higher-level structure of the program.
+• A conditional construct (like if or switch) results in branches in the
+graph, while a loop construct (like for or while) results in reverse edges
+
+===== [PAGE 28] =====
+Restricted -مقيد
+Characteristics of Control Flow Graph (CFG)
+•
+CFG is process-oriented.
+•
+CFG shows all the paths that can be traversed during program execution
+•
+Control flow graph is a directed graph.
+•
+Edges in CFG portray control flow paths and the nodes in CFG portray 
+basic blocks.
+•
+Two designated blocks in Control Flow Graph:
+•
+Entry Block: Entry block allows the control to enter into the CFG
+•
+Exit Block: Control flow leaves through the exit block.
+•
+Hence, the CFG is comprised of all the building blocks involved in a flow 
+diagram such as the start node, end node and flows between the nodes.
+
+===== [PAGE 29] =====
+Restricted -مقيد
+Control Flow Graph
+• The most commonly used program representation
+• A basic block in program P is a sequence of consecutive statements with a
+single entry and a single exit point.
+•
+Thus, a block has unique entry and exit points.
+• Control always enters a basic block at its entry point and exits from its exit
+point.
+• There is no possibility of exit or a halt at any point inside the basic block
+except at its exit point.
+• The entry and exit points of a basic block coincide when the block
+contains only one statement.
+
+===== [PAGE 30] =====
+Restricted -مقيد
+© Aditya P. Mathur 2005
+Basic Blocks: Example
+Example: Computing x raised to y
+
+===== [PAGE 31] =====
+Restricted -مقيد
+© Aditya P. Mathur 2005
+Basic Blocks: Example (contd.)
+Basic blocks
+
+===== [PAGE 32] =====
+Restricted -مقيد
+Control Flow Graph (CFG)
+• A control flow graph (or flow graph) G is defined as a finite set N of 
+nodes and a finite set E of edges.   
+• An edge (i, j) in E connects two nodes ni and nj in N.  
+• We often write G=(N, E) to denote a  flow graph G with nodes given 
+by N and edges by E.
+
+===== [PAGE 33] =====
+Restricted -مقيد
+•
+In a flow graph of a program, each basic block becomes a node and 
+edges are used to indicate the flow of control between  blocks. 
+•
+An edge (i, j) connecting basic blocks bi and bj implies that control 
+can go from block bi to block bj.  
+•
+We also assume that there is a node labeled Start in N that has no 
+incoming edge, and another node labeled End, also in N,  that has 
+no outgoing edge.
+Control Flow Graph (CFG)
+
+===== [PAGE 34] =====
+Restricted -مقيد
+CFG Example
+N={Start, 1, 2, 3, 4, 5, 6, 7, 
+8, 9, End}
+E={(Start,1), (1, 2), (1, 3), (2, 4), 
+(3, 4), (4, 5),  (5, 6), (6, 5), 
+(5, 7), (7, 8), (7, 
+9),  (9, End)}
+
+===== [PAGE 35] =====
+Restricted -مقيد
+© Aditya P. Mathur 2005
+N={Start, 1, 2, 3, 4, 5, 6, 7, 
+8, 9, End}
+E={(Start,1), (1, 2), (1, 3), (2,4), 
+(3, 4), (4, 5),  (5, 6), (6, 5), 
+(5, 7), (7, 8), (7, 
+9),  (9, End)}
+Same CFG with statements 
+removed.
+CFG Example
+
+===== [PAGE 36] =====
+Restricted -مقيد
+Paths
+• Consider a flow graph G=(N, E). 
+• A sequence of k edges, k>0,  (e1, e2, … ek), denotes a path of length k 
+through the flow graph if the following  sequence condition holds.
+• Given that np, nq, nr, and ns are nodes belonging to N, and 0<i<k, if  
+ei = (np, nq) and ei+1 = (nr, ns) then nq = nr.
+• Complete path: a path from start to exit
+• Sub-path: a subsequence of a complete path
+
+===== [PAGE 37] =====
+Restricted -مقيد
+© Aditya P. Mathur 2005
+Paths: Sample Paths Through the 
+Exponentiation Flow Graph
+p1= (Start, 1, 2, 4, 5,  6, 5, 7, 9, End)
+p2= (Start, 1, 3, 4, 5, 6, 5, 7, 9, End)
+Two feasible and complete paths:
+Bold edges: complete path.
+Dashed edges: subpath.
+p1= ( (Start, 1), (1, 2), (2, 4), (4, 5),  (5, 6), (6, 5),  (5, 
+7), (7, 9), (9, End))
+Specified unambiguously using edges:
+
+===== [PAGE 38] =====
+Restricted -مقيد
+CFG and AST
+• Control flow graph has a different structure than AST 
+– AST for a for-loop would have each of the control expressions as an 
+immediate child of the loop node, whereas the control flow graph places each 
+one in the order it would be executed in practice.
+– The if statement has edges from each branch of the conditional to the 
+following node, so that one can easily trace the flow of execution from one 
+component to the next.
+
+===== [PAGE 39] =====
+Restricted -مقيد
+CFG Example
+• For example, this bit of code
+
+===== [PAGE 40] =====
+Restricted -مقيد
+CFG Example
+• Would result in this control flow 
+graph
+
+===== [PAGE 41] =====
+Restricted -مقيد
+Static Single Assignment Form
+•
+Static
+single
+assignment
+(SSA)
+form
+is
+a
+commonly-used
+representation for complex optimizations.
+•
+SSA uses the information in the control ﬂow and updates each basic
+block with a new restriction:
+•
+Variables cannot change their values.
+•
+Instead, whenever a variable is assigned a new value, it is given a new
+version number.
+•
+For example, suppose that we have this bit of code:
+int x = 1;
+int a = x;
+int b = a + 10;
+x = 20*b;
+x = x + 30;
+could be re-
+written in SSA 
+form as
+int x_1 = 1;
+int a_1 = x_1;
+int b_1 = a_1 + 10;
+x_2 = 20 * b_1;
+x_3 = x_2 + 30;
+
+===== [PAGE 42] =====
+Restricted -مقيد
+Static Single Assignment Form
+•
+A peculiarity comes when a variable is given a different value in two
+branches of a conditional.
+•
+Following the conditional, the variable could have either value, but
+we don’t know which one.
+•
+To express this, we introduce a new function φ(x, y) which indicates
+that either value x or y could be selected at runtime.
+•
+The φ function may not necessarily translate to an instruction in the
+assembly output, but serves to link the new value to its possible old
+values, reﬂecting the control ﬂow graph.
+
+===== [PAGE 43] =====
+Restricted -مقيد
+Static Single Assignment Form
+•
+For example, this code fragment:
+if(y<10) {
+x=a;
+} else {
+x=b;
+}
+•
+Becomes this:
+if(y_1<10) {
+x_2=a;
+} else {
+x_3=b;
+}
+x_4 = phi(x_2,x_3);
+
+===== [PAGE 44] =====
+Restricted -مقيد
+Linear IR
+•
+A linear IR is an ordered sequence of instructions that is closer to the
+final goal of an assembly language.
+•
+It loses some of the flexibility of a DAG (which does not commit to a
+specific ordering) but can capture expressions, statements, and
+control flow all within one data structure.
+
+===== [PAGE 45] =====
+Restricted -مقيد
+Linear IR
+•
+There is no universal standard for a linear IR
+•
+Looks like an idealized assembly language with a large(or infinite) number of 
+registers and the usual arithmetic and control flow operations.
+•
+Assume an IR where LOAD and STOR are used to move values 
+between memory and registers, and three-address arithmetic 
+operations read two registers and write to a third, from left to right. 
+•
+Our example expression would look like this:
+
+===== [PAGE 46] =====
+Restricted -مقيد
+Linear IR
+• This IR is easy to store efficiently, because each instruction can be a 
+fixed size 4-tuple representing the operation and (max) of three 
+arguments. 
+• The external representation is also straight forward.
+• As the example suggests, it is most convenient to pretend that there 
+are an infinite number of virtual registers, such that every new value 
+computed writes to a new register.
+
+===== [PAGE 47] =====
+Restricted -مقيد
+Linear IR
+• In this form, we can easily identify the lifetime of a value by observing the 
+first point where a register is written, and the last point where a register is 
+used.
+• Between those two points, the value of register r1 must be preserved. 
+• For example, the lifetime of %r1 is from instruction 1 to instruction 4.
+
+===== [PAGE 48] =====
+Restricted -مقيد
+Stack Machine IR
+• An even more compact intermediate representation is a stack machine 
+IR. 
+• Such a representation is designed to execute on a virtual stack 
+machine that has no traditional registers, but only a stack to hold 
+intermediate registers.
+• A stack machine IR typically has:
+– a PUSH instruction which pushes a variable or literal value on to the stack and 
+– a POP instruction which removes an item and stores it in memory. 
+
+===== [PAGE 49] =====
+Restricted -مقيد
+Stack Machine IR
+• Binary arithmetic operators (like FADD or FMUL) implicitly pop two 
+values off the stack and push the result on the stack
+• Unary operators (ITOF) pop one value and push one value. 
+• A few utility instructions are needed to manipulate the stack
+– a COPY instruction which pushes a duplicate value on to the stack.
+
+===== [PAGE 50] =====
+Restricted -مقيد
+Stack Machine IR
+• To emit a stack machine IR from a DAG, simply perform a post order 
+traversal of the AST and 
+– emit a PUSH for each leaf value, 
+– an arithmetic instruction for each interior node, and 
+– a POP instruction to assign a value to a variable.
+
+===== [PAGE 51] =====
+Restricted -مقيد
+Stack Machine IR
+• Our example 
+expression would look 
+like this in a stack 
+machine IR
+•
+If we assume that a has the value 
+5.0, then executing the IR directly 
+would result in this:
+
+===== [PAGE 52] =====
+Restricted -مقيد
+•
+A stack machine IR has many advantages.
+•
+More compact than a 3-tuple/4-tuple linear representation, since there is no 
+need to record the details of registers. 
+•
+Straight forward to implement this language in a simple interpreter.
+•
+However, a stack-based IR is more difficult to translate to a
+conventional register-based assembly language, precisely because the
+explicit register names are lost.
+•
+Further transformation or optimization of this form requires that we
+transform the implicit information dependencies in the stack-basic IR
+back into a more explicit form such as a DAG or a linear IR with
+explicit register names.
+Stack Machine IR
+
+===== [PAGE 53] =====
+Restricted -مقيد
+CS477: Compiler Design
+Module 8
+Assembly Language I
+
+===== [PAGE 54] =====
+Restricted -مقيد
+Assembly Language - Introduction
+• In order to build a compiler, working knowledge of at least one kind
+of assembly language is must.
+• It helps to see two or more variations of assembly, so as to fully
+appreciate the difference between architectures
+• Some of these differences, such as register structure, are quite
+fundamental, while some of the differences are merely superficial.
+
+===== [PAGE 55] =====
+Restricted -مقيد
+A Machine’s Own Language
+• Understanding how computers work require familiarity with the 
+computer’s own language 
+– called “the machine language”
+• Machine language is:
+– low-level language (very detailed)
+– specific to a machine’s “architecture”
+– a language “spoken” using voltages
+• Humans represent it with zeros and ones
+
+===== [PAGE 56] =====
+Restricted -مقيد
+Example of Machine-Language
+• Machine code for program-fragment:
+10100001 10111100 10010011 00000100
+00001000 00000011 00000101 11000000
+10010011 00000100 00001000 10100011
+11000000 10010100 00000100 00001000
+• Corresponding to high-level code:
+z = x + y;
+
+===== [PAGE 57] =====
+Restricted -مقيد
+Incomprehensible?
+• Though possible, it is extremely difficult, tedious (and error-
+prone) for humans to read and write “raw” machine-
+language 
+• When unavoidable, a special notation can help (called 
+hexadecimal representation):  
+A1 BC 93 04 08  
+03 05 C0 93 04 08 
+A3 C0 94 04 08 
+• But still looks rather meaningless!
+
+===== [PAGE 58] =====
+Restricted -مقيد
+Hence, Assembly Language
+• There are two key ideas:
+– mnemonic opcodes: use abbreviations of English language words to denote 
+operations
+– symbolic addresses: invent “meaningful” names for memory storage locations 
+we need 
+• These ideas make machine-language understandable to humans – if 
+they know their machine’s design
+
+===== [PAGE 59] =====
+Restricted -مقيد
+Assembly Language
+• Many seem to think that assembly language is rather obscure and 
+complicated
+– Well, it is true that the complete manual for a CPU is extraordinarily thick and 
+may document hundreds of instructions and obscure addressing modes.
+• However, practically speaking, it is only necessary to learn a small 
+subset of a given assembly language in order to write a functional 
+compiler
+– Perhaps 30 instructions
+
+===== [PAGE 60] =====
+Restricted -مقيد
+© Aditya P. Mathur 2005
+X86 and ARM
+• We will look at two different CPU architectures that are in wide use 
+today: 
+• x86 
+• ARM
+
+===== [PAGE 61] =====
+Restricted -مقيد
+X86 and ARM
+• The Intel x86
+• A CISC architecture
+• Evolved since the 1970s from 8-bit to 64-bit
+• Nowadays, the dominant chip in personal computers, laptops and high-
+performance servers.
+• The ARM processor
+• A RISC architecture
+• Began life as a 32-bit chip for the PC market,
+• Now the dominant chip for low-power and embedded devices such as
+mobile phones and tablets.
+
+===== [PAGE 62] =====
+Restricted -مقيد
+Open-source Assembler Tools
+• A given assembly language can have multiple dialects for the same CPU
+– Depending on whether one uses the assembler provided by the chip vendor, or other open-
+source tools.
+• For consistency, we use examples in the assembly dialect supported by the GNU 
+compiler and assembler
+– Known as gcc and as (or sometimes gas).
+
+===== [PAGE 63] =====
+Restricted -مقيد
+Open-source Assembler Tools
+•
+A good way to get started is to view the assembler output of the 
+compiler for a C program. 
+•
+To do this, run gcc with the -S flag, and the compiler will produce assembly 
+output rather than a binary program. 
+•
+On Unix-like systems, assembly code is stored in files ending with .s, 
+which indicates “source” file. 
+•
+If you run gcc -S hello.c -o hello.s on this C program: 
+
+===== [PAGE 64] =====
+Restricted -مقيد
+Open Source Assembler Tools
+• then you should see output similar to this in hello.s
+
+===== [PAGE 65] =====
+Restricted -مقيد
+Assembly Code
+•
+Regardless of the CPU architecture, the assembly code has three 
+different kinds of elements:
+1. Directives begin with a dot and indicate structural information useful 
+to the assembler, linker, or debugger, but are not in and of themselves 
+assembly instructions. For example,
+•
+.file simply records the name of the original source file to assist the debugger.
+•
+.data indicates the start of the data segment of the program
+
+===== [PAGE 66] =====
+Restricted -مقيد
+Assembly Code
+•
+Regardless of the CPU architecture, the assembly code has three 
+different kinds of elements:
+2. Labels end with a colon and indicate by their position the association 
+between names and locations. 
+•
+For example, the label .LC0: indicates that the immediately following string 
+should be called .LC0. 
+•
+The label main: indicates that the instruction PUSHQ %rbp is the first 
+instruction of the main function.
+
+===== [PAGE 67] =====
+Restricted -مقيد
+Assembly Code
+•
+Regardless of the CPU architecture, the assembly code has three 
+different kinds of elements:
+3. Instructions are the actual assembly code like (PUSHQ  %rbp), 
+typically indented to visually distinguish them from directives and 
+labels. 
+•
+Instructions in GNU assembly are not case sensitive, but we will generally 
+upper case them, for consistency. 
+•
+To turn the hello.s below into an executable program, just run gcc, 
+which assemble it, and link with the standard library: 
+•
+Note: It will itself figure out that its an assembly program
+
+===== [PAGE 68] =====
+Restricted -مقيد
+Assembly Code
+• It is also interesting to compile the assembly code into object code, 
+and then use the nm utility to display the symbols (”names”) present 
+in the code:
+• This displays the information available to the linker:
+– main is present in the text (T) section of the object, at location zero
+– printf is undefined (U), since it must be obtained from the standard library. 
+
+===== [PAGE 69] =====
+Restricted -مقيد
+X86 Assembly Language
+• X86 is a generic term that refers to the series of microprocessors
+descended from (or compatible with) the Intel 8088 processor used in
+the original IBM PC,
+– Including the 8086, 80286, ’386, ’486, and many others.
+• Each generation of CPUs added new instructions and addressing
+modes from 8-bit to 16-bit to 32-bit, all while retaining backwards
+compatibility with old code.
+• A variety of competitors produced compatible chips that implemented
+the same instruction set
+– such as AMD
+
+===== [PAGE 70] =====
+Restricted -مقيد
+X86 Assembly Language
+• X86-64 is a fine example of CISC (complex instruction set computing). 
+– There are a very large number of instructions with many different sub modes, 
+some of them designed for very narrow tasks
+• Registers and Data Types
+– X86-64 has sixteen (almost) general purpose 64-bit integer registers
+– Almost general purpose since earlier versions of CPUs intended each register 
+to be used for specific purpose i.e. not all instructions could be applied to 
+every register
+
+===== [PAGE 71] =====
+Restricted -مقيد
+X86 Assembly Language
+• The lower eight registers indicate the purpose for which each was
+originally intended:
+• For example, %rax is the accumulator.
+• Two registers are reserved for use as the stack pointer (%rsp) and the
+base pointer (%rbp).
+• The final eight registers are numbered and have no specific restrictions
+
+===== [PAGE 72] =====
+Restricted -مقيد
+Register Structure
+• The numbered registers %r8-%r15 have the same structure, but a 
+slightly different naming scheme:
+• To keep things simple, we will focus our attention on the 64-bit registers.
+
+===== [PAGE 73] =====
+Restricted -مقيد
+• The MOV instruction moves data between registers and to and from memory in a 
+variety of different modes.
+– MOVB moves a byte, MOVW moves a word, MOVL moves a long, MOVQ moves a quad-word.
+• Here is an example of using each kind of addressing mode to load a 64-bit value 
+into %rax:
+Addressing Modes
+
+===== [PAGE 74] =====
+Restricted -مقيد
+Basic Arithmetic
+• Need four basic arithmetic instructions for compiler: 
+– integer addition, subtraction, multiplication, and division. 
+– ADD and SUB have two operands: a source and a destructive target.
+• Example: instruction adds %rbx to %rax, and places the result in %rax, 
+overwriting its previous content 
+• Example: c = a+b+b; could be translated like this
+
+===== [PAGE 75] =====
+Restricted -مقيد
+Basic Arithmetic
+• The IMUL instruction is a little unusual, because multiplying two
+64 bit integers results in a 128-bit integer, in the general case.
+– Example, suppose that you wish to translate
+c = b*(b+a);
+where a, b, and c are global integers.
+• Here is one possible translation:
+. 
+
+===== [PAGE 76] =====
+Restricted -مقيد
+The Stack
+• Stack is an auxiliary data structure used to record the function 
+call history of the program along with local variables that do not 
+fit in registers.
+• To push %rax onto the stack, we must subtract 8 (the size of 
+%rax in bytes) from %rsp and then write to the location pointed 
+to by %rsp:
+• Popping a value from the stack involves the opposite
+
+===== [PAGE 77] =====
+Restricted -مقيد
+The Stack
+• To discard the most recent value from stack, just move the stack 
+pointer the appropriate number of bytes :
+• Of course, pushing to and popping from stack referred to by %rsp is 
+common, thus the two operations have their own instructions that 
+behave exactly as above:
+– Note: In 64-bit code, PUSH and POP are limited to working with 64-bit values, 
+so a manual MOV and ADD must be used if it is necessary to move smaller 
+items to/from the stack.
+
+===== [PAGE 78] =====
+Restricted -مقيد
+CS477: Compiler Design
+Module 9
+Assembly Language II
+
+===== [PAGE 79] =====
+Restricted -مقيد
+ARM Assembly
+• The ARM processor architecture has a history almost
+as long as the X86 architecture.
+• Originated as the 32-bit Acorn RISC Machine used in the
+Acorn Archimedes personal computer in 1987
+• Has evolved into a wide-used low-power CPU employed in
+many embedded and mobile systems, now known as the
+Advanced RISC Machine (ARM)
+• The most recent versions of the architecture are
+ARMv7-A (32-bit) and ARMv8-A (64-bit.)
+
+===== [PAGE 80] =====
+Restricted -مقيد
+ARM Assembly
+• ARM is an example of a Reduced Instruction Set
+Computer (RISC) rather than a Complex Instruction Set
+Computer (CISC).
+• Compared to X86, ARM relies on a smaller set of
+instructions which are simpler to pipeline or run in
+parallel,
+reducing
+the
+complexity
+and
+energy
+consumption of the chip.
+• ARM is sometimes considered “partially” RISC due to a
+few exceptions.
+
+===== [PAGE 81] =====
+Restricted -مقيد
+Registers and Data Types
+• ARM-32 has a set of 16 general purpose registers, r0-
+r15, with the following conventions for use:
+• Additionally, two registers that cannot be directly 
+accessed: 
+– Current Program Status Register (CPSR)
+– Saved Program Status Register (SPSR). 
+Hold results of comparison 
+operations and privileged 
+data regarding the process
+
+===== [PAGE 82] =====
+Restricted -مقيد
+Registers and Data Types
+• ARM uses the following suffixes to indicate data sizes. 
+– Note that these have different meanings in X86 assembly
+– If no sufﬁx is given, the assembler assumes an unsigned word operand. 
+• There is no register naming structure for anything below a word
+
+===== [PAGE 83] =====
+Restricted -مقيد
+Addressing Modes
+• ARM makes the use of two different classes of instructions to move data
+between registers and between registers and memory:
+– MOV copies data and constants between registers
+– LDR (load) and STR (store) instructions are used to move data between
+registers and memory.
+
+===== [PAGE 84] =====
+Restricted -مقيد
+Addressing Modes
+• MOV instruction is used to move a known immediate value into a 
+given register or move another register into the first register
+• Most ARM instructions indicate the destination register on the 
+left and the source register on the right. 
+– So, for moving data between immediate values and registers 
+we would have the following:
+
+===== [PAGE 85] =====
+Restricted -مقيد
+Addressing Modes
+•
+To move values in and out of memory, use the Load
+(LDR) and Store (STR) instructions, both of which
+indicate the source or destination register as the first
+argument, and the source or destination memory
+address as the second argument.
+•
+In the simplest case, the address is given by a register
+and indicated in brackets:
+•
+In this case, Rd denotes the destination register, Rs denotes
+the source register and Ra denotes the register containing
+the address.
+
+===== [PAGE 86] =====
+Restricted -مقيد
+Addressing Modes
+• Both LDR and STR support a variety of addressing 
+modes, shown in Figure 10.7.
+• First, LDR can be used to load a literal value (or label 
+address) of a full 32-bits into a register.
+
+===== [PAGE 87] =====
+Restricted -مقيد
+Addressing Modes
+• The following instructions, which load the address 
+of x into r1, then the value of x into r2
+• Will be expanded into this load of the address of x 
+from an adjacent literal pool, followed by loading 
+the value of x:
+
+===== [PAGE 88] =====
+Restricted -مقيد
+Basic Arithmetic
+• ARM offers three-address arithmetic instructions 
+on registers. 
+• The ADD and SUB instructions specify the result 
+register as the first argument, and compute on the 
+second and third arguments. 
+• The third operand may be an 8-bit constant, or a 
+register with an optional shift applied.
+
+===== [PAGE 89] =====
+Restricted -مقيد
+Basic Arithmetic
+• Multiplication works the same way, except that multiplying
+two 32-bit numbers could result in a 64-bit value.
+• The ordinary MUL discards the high bits of the results,
+while UMULL puts the 64-bit result in two 32-bit registers.
+• There is no division instruction in ARM, because it cannot 
+be carried out in a single pipelined cycle. 
+
+===== [PAGE 90] =====
+Restricted -مقيد
+Basic Arithmetic
+• The
+logical
+instructions
+are
+very
+similar
+in
+structure to the arithmetic instructions.
+• We have the bitwise-and, bitwise-or, bitwise-
+exclusive-or and bitwise-bit-clear, which is the
+equivalent of a bitwise-and of the first value and
+the inverted second value.
+• The
+move-not
+MVN
+instruction
+performs
+a
+bitwise-not while moving from one register to
+another.
+
+===== [PAGE 91] =====
+Restricted -مقيد
+Comparisons and Branches
+• The CMP instruction compares two values and
+sets the N (negative) and Z (zero) ﬂags in the
+CPSR, to be read by later instructions.
+• In the case of comparing a register and an
+immediate value, the immediate must be the
+second operand:
+
+===== [PAGE 92] =====
+Restricted -مقيد
+Comparisons and Branches
+ARM Branch Instructions
+
+===== [PAGE 93] =====
+Restricted -مقيد
+Comparisons and Branches
+• A
+variety
+of
+branch
+instructions
+consult
+the
+previously-set values of the CPSR, and then jump
+to a given label, if the appropriate ﬂags are set.
+• An unconditional branch is speciﬁed with simply B
+• Branch-and-link (BL) instruction can be used to
+implement function calls.
+• BL sets the link register to be the address of the next
+instruction, and then jumps to the given label.
+• The link register is then used as the return address at
+the conclusion of the function.
+
+===== [PAGE 94] =====
+Restricted -مقيد
+Comparisons and Branches
+• BX instruction branches to the address given in a
+register and is most frequently used to return from
+a function call by branching to the link register.
+• BLX performs a branch-and-link to the address
+given by a register, and can be used to invoke
+function pointers, virtual methods, or any other
+indirect jump.
+
+===== [PAGE 95] =====
+Restricted -مقيد
+Comparisons and Branches
+• A special feature of the ARM instruction set is
+conditional execution.
+• A 4-bit ﬁeld in each instruction word indicates one
+of 16 possible conditions that must hold, otherwise
+the instruction is ignored.
+• The various types of conditional branch shown
+above are simply a plain branch (B) instruction
+with the various conditions applied.
+• The same two letter sufﬁxes can be applied to
+almost any instruction.
+
+===== [PAGE 96] =====
+Restricted -مقيد
+The Stack
+• The stack is an auxiliary data structure used primarily to
+record the function call history of the program along with
+local variables that do not fit in registers.
+• By convention, the stack grows downward from high
+values to low values.
+• The sp register is known as the stack pointer and
+keeps track of the bottom-most item on the stack.
+• To push the r0 register onto the stack, we must subtract 
+the size of the register from sp, and then store r0 into 
+the location pointed to by sp:
+
+===== [PAGE 97] =====
+Restricted -مقيد
+The Stack
+• The PUSH pseudo-instruction accomplishes the same task but can also 
+move any number of registers (encoded as a bitmask) to the stack.
+PUSH {r0,r1,r2}
+• Popping a value off the stack involves the opposite:
+LDR r0, [sp]
+ADD sp, sp, #4.
+
+===== [PAGE 98] =====
+Restricted -مقيد
+The Stack
+• Once again this can be done with a single instruction:
+LDR r0, [sp], #4
+• And, to pop a set of registers all at once:
+POP {r0,r1,r2}
+• Unlike X86, any data items ranging from a byte to a double-word can be
+pushed on to the stack, as long as data alignment is respected.
+
+===== [PAGE 99] =====
+Restricted -مقيد
+CS477: Compiler Design
+Module 10
+Code Generation
+
+===== [PAGE 100] =====
+Restricted -مقيد
+Introduction
+• The final phase of a compiler is code generator
+• It receives an intermediate representation (IR) with supplementary 
+information in symbol table
+• Produces a semantically equivalent target program
+• Code generator main tasks:
+1.
+Instruction selection
+2.
+Register allocation and assignment
+3.
+Instruction ordering
+Front end
+Code 
+Generator
+Code Optimizer
+
+===== [PAGE 101] =====
+Restricted -مقيد
+Issues in the Design of Code Generator
+• Most important criterion: produce correct target code
+• Input to the code generator
+– IR + Symbol table
+– Assumptions:
+• Front-end produces low-level IR, i.e. values of names in it can be 
+directly manipulated by the machine instructions.
+• Syntactic and semantic errors have been already detected
+• The target program
+– Common target architectures are RISC, CISC and Stack based 
+machines
+– In this discussion we will use a very simple RISC-like computer with 
+addition of some CISC-like addressing modes
+
+===== [PAGE 102] =====
+Restricted -مقيد
+Overview
+• Intermediate representations span the gap between 
+the source and target languages:
+– closer to target language
+– (more or less) machine independent
+– allows many optimizations to be done in a machine-
+independent way
+• Implementable via syntax directed translation, so can 
+be folded into the parsing process.
+
+===== [PAGE 103] =====
+Restricted -مقيد
+Code Generation
+• The code generated by the compiler is an object
+code of some lower-level programming language
+–For example, assembly language.
+• The source code written in a higher-level language
+is transformed into a lower-level language that
+results in a lower-level object code, which should
+have the following minimum properties:
+It should carry the exact meaning of the source code.
+It should be efficient in terms of CPU usage and memory 
+management.
+
+===== [PAGE 104] =====
+Restricted -مقيد
+Supporting Functions
+• The examples will focus on X86-64 assembly
+code, but they are not hard to adapt to ARM and
+other assembly languages as needed.
+• We deﬁne a method for each element of a
+program:
+–decl_codegen will generate code for a declaration
+–stmt_codegen for a statement
+–expr_codegen for an expression, and so on
+• These relationships are shown in Figure 11.1

@@ -1,0 +1,61 @@
+{
+  "pdf": "CS477 - Assignment_2.pdf",
+  "page_count": 9,
+  "pages": [
+    {
+      "page": 1,
+      "chars": 1262,
+      "images": 4,
+      "drawings": 19
+    },
+    {
+      "page": 2,
+      "chars": 940,
+      "images": 3,
+      "drawings": 98
+    },
+    {
+      "page": 3,
+      "chars": 714,
+      "images": 0,
+      "drawings": 4
+    },
+    {
+      "page": 4,
+      "chars": 1098,
+      "images": 3,
+      "drawings": 30
+    },
+    {
+      "page": 5,
+      "chars": 20,
+      "images": 0,
+      "drawings": 4
+    },
+    {
+      "page": 6,
+      "chars": 1194,
+      "images": 3,
+      "drawings": 223
+    },
+    {
+      "page": 7,
+      "chars": 22,
+      "images": 0,
+      "drawings": 4
+    },
+    {
+      "page": 8,
+      "chars": 22,
+      "images": 0,
+      "drawings": 4
+    },
+    {
+      "page": 9,
+      "chars": 384,
+      "images": 3,
+      "drawings": 7
+    }
+  ],
+  "low_text_pages": []
+}

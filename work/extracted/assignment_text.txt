@@ -1,0 +1,301 @@
+# SOURCE FILE: CS477 - Assignment_2.pdf
+# PAGES: 9
+
+===== [PAGE 1] =====
+ 
+ 
+ 
+ 
+ 
+ 
+College of Computing and Informatics 
+ 
+Assignment 2 
+Deadline: Day 16/11/2026 @ 23:59 
+[Total Mark for this Assignment is 8] 
+ 
+ 
+ 
+Student Details: 
+Name: ### 
+ 
+CRN: ### 
+ID: ### 
+ 
+Instructions: 
+•
+You must submit two separate copies (one Word file and one PDF file) using the Assignment Template on 
+Blackboard via the allocated folder. These files must not be in compressed format. 
+•
+It is your responsibility to check and make sure that you have uploaded both the correct files. 
+•
+Zero mark will be given if you try to bypass the SafeAssign (e.g. misspell words, remove spaces between 
+words, hide characters, use different character sets or languages other than English or any kind of 
+manipulation). 
+•
+Email submission will not be accepted. 
+•
+You are advised to make your work clear and well-presented. This includes filling your information on the cover 
+page. 
+•
+You must use this template, failing which will result in zero mark. 
+•
+You MUST show all your work, and text must not be converted into an image, unless specified otherwise by 
+the question. 
+•
+Late submission will result in ZERO mark. 
+•
+The work should be your own, copying from students or other resources will result in ZERO mark. 
+•
+Use Times New Roman font for all your answers.  
+
+===== [PAGE 2] =====
+Pg. 01 
+Question One 
+ 
+Question One 
+Consider the following B-Minor program: 
+area: function integer ( w: integer, h: integer ); 
+ main: function integer () = { 
+    r: integer = area( 4, 2 + 3 ); 
+    if ( r > 10 ) { 
+        print "big"; 
+    } else { 
+        print "small"; 
+    } 
+    return 0; 
+} 
+Task: Draw the AST for the body of main, starting at its first statement. Use the node kinds 
+and fields in the table below. 
+Node kind 
+Fields (cells) in the box 
+DECL "name" 
+type | value | code | next 
+STMT_DECL, STMT_IF_ELSE, 
+STMT_BLOCK, STMT_PRINT, 
+STMT_RETURN 
+decl | init_expr | expr | next_expr | body | 
+else_body | next 
+EXPR_CALL, EXPR_ARG, EXPR_ADD, 
+EXPR_GT 
+left | right 
+EXPR_NAME, EXPR_INTEGER, 
+EXPR_STRING 
+the name or value (no pointer cells) 
+TYPE_INTEGER 
+subtype | params 
+Learning 
+Outcome(s): 
+Understand the 
+concept of 
+scanning and 
+parsing and 
+constructing an 
+Abstract Syntax 
+Tree. 
+ 
+ 
+ 
+ 
+ 
+ 
+2 Marks 
+
+===== [PAGE 3] =====
+Pg. 02 
+Question One 
+ 
+Rules 
+1. Draw each node as a box, as in the "Putting it All Together" slide: the kind on top, its fields 
+below. Draw an arrow from a field to the node it points to. An empty field is NULL. 
+2. Statements are linked through next. 
+3. A local declaration is a STMT_DECL whose decl points to a DECL. The initial value goes 
+in the DECL's value. 
+4. STMT_IF_ELSE uses expr (condition), body and else_body. Each { } branch is a 
+STMT_BLOCK whose body points to its statement. STMT_PRINT and STMT_RETURN 
+use expr. 
+5. A call is an EXPR_CALL: left is the function name, and right is a chain of EXPR_ARG 
+nodes. Each EXPR_ARG holds one argument in left and the next EXPR_ARG (or NULL) in 
+right. 
+  
+ 
+
+===== [PAGE 4] =====
+Pg. 03 
+Question Two 
+ 
+Question Two 
+Consider the B-Minor uses following type rules (R): 
+• 
+R1: A value may only be assigned to a variable of the same type. 
+• 
+R2: A binary operator must have the same type on its left and right sides. 
+• 
+R3: == may be applied to integer, boolean, char or string values, and returns boolean. 
+• 
+R4: > may only be applied to integers, and returns boolean. 
+• 
+R5: + may only be applied to integers, and returns integer. 
+When the type checker finds an error, it reports it but still gives the operator its normal result 
+type (for example, + is still integer), and carries on checking. 
+1  main: function void () = { 
+2      x: integer = 10; 
+3      b: boolean = x > 5; 
+4      s: string  = "hi"; 
+5      y: integer = x + b; 
+6      t: boolean = s == "hi"; 
+7      c: char    = 'a' + 1; 
+8  } 
+Task: Find every type error in this code. For each error, give the line number, the rule it 
+breaks, and a clear error message. 
+ 
+Learning 
+Outcome(s): 
+Understand the 
+concept of 
+scanning and 
+parsing and 
+constructing an 
+Abstract Syntax 
+Tree. 
+ 
+ 
+ 
+ 
+ 
+2 Marks 
+
+===== [PAGE 5] =====
+Pg. 04 
+Question Two 
+ 
+  
+ 
+
+===== [PAGE 6] =====
+Pg. 05 
+Question Three 
+ 
+Question Three 
+ The symbol table stores one entry for every name declared in a program. Each entry 
+records: 
+• Kind: GLOBAL (declared outside any function), PARAM (a function parameter) or 
+LOCAL (a variable declared inside a function). 
+• Which: the position number. Parameters are numbered 0, 1, 2 … in order. Locals 
+are numbered 0, 1, 2 … in order, starting again from 0 in each function. Globals have 
+no number (write –). 
+• Type: the declared type of the name. 
+• Scope: where the name is visible: Global, or the name of the function it belongs to. 
+1  count: integer = 0; 
+2  area: function integer ( w: integer, h: integer ) = { 
+3      result: integer = w * h; 
+4      return result; 
+5  } 
+6  main: function void () = { 
+7      name: string = "box"; 
+8      big: boolean = area( 4, 5 ) > 10; 
+9  } 
+Task: Complete the symbol table below for every name declared in this program. 
+Name 
+Kind 
+Which 
+Type 
+Scope 
+count 
+ 
+ 
+ 
+ 
+area 
+ 
+ 
+ 
+ 
+w 
+ 
+ 
+ 
+ 
+h 
+ 
+ 
+ 
+ 
+result 
+ 
+ 
+ 
+ 
+main 
+ 
+ 
+ 
+ 
+name 
+ 
+ 
+ 
+ 
+big 
+ 
+ 
+ 
+ 
+Learning 
+Outcome(s): 
+Understand the 
+concept of 
+scanning and 
+parsing and 
+constructing an 
+Abstract Syntax 
+Tree. 
+ 
+ 
+ 
+ 
+ 
+2 Marks 
+
+===== [PAGE 7] =====
+Pg. 06 
+Question Three 
+ 
+ 
+
+===== [PAGE 8] =====
+Pg. 07 
+Question Three 
+ 
+  
+ 
+ 
+ 
+ 
+
+===== [PAGE 9] =====
+Pg. 08 
+Question Four 
+ 
+Question Four 
+  
+Give four reasons with enough explanation why compilers use an Intermediate 
+representation (IR) instead of translating the source code directly into machine code. 
+ 
+  
+Learning 
+Outcome(s): 
+To describe 
+intermediate code 
+by using 
+technique of 
+syntax directed 
+translation and 
+code generation 
+using Assembly 
+language 
+ 
+ 
+ 
+ 
+2 Marks 

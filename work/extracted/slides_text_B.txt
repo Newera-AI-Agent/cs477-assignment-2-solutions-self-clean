@@ -1,0 +1,1455 @@
+# SOURCE FILE: CS477 (6-13).pdf
+# PAGES: 207
+
+===== [PAGE 105] =====
+Restricted -مقيد
+Supporting Functions
+
+===== [PAGE 106] =====
+Restricted -مقيد
+Supporting Functions
+• To generate expressions, some scratch registers are
+needed to hold intermediate values between operators
+• Write three functions with the following interface:
+– int scratch_alloc();
+•ﬁnd an unused register in the table, mark it as in use, and return
+the register number r. If scratch_alloc cannot ﬁnd a free register,
+just emit an error message and halt
+– void scratch_free( int r );
+•mark the indicated register as available
+– const char * scratch_name( int r );
+•return the name of a register, given its number r
+
+===== [PAGE 107] =====
+Restricted -مقيد
+Supporting Functions
+• We can set aside each register for a purpose:
+• Some are for function arguments
+• Some for stack-frame management,
+• Some are available for scratch values.
+• Take the scratch registers and put them into a table:
+• Then, write scratch_alloc to find an unused register in the
+table, mark it as in use, and return the register number r.
+• scratch_free mark the indicated register as available.
+
+===== [PAGE 108] =====
+Restricted -مقيد
+Supporting Functions
+.
+•
+Next, we will need to generate a large number of 
+unique, anonymous labels that indicate the targets of 
+jumps and conditional branches.
+•
+Write two functions to generate and display labels:
+int label_create(); 
+const char * label_name( int label );
+•
+label_create simply increments a global counter and returns 
+the current value
+•
+label _name returns that label in a string form
+
+===== [PAGE 109] =====
+Restricted -مقيد
+Supporting Functions
+.
+•
+Finally, we need a way to map the symbols in a program 
+to assembly language code representing those symbols
+•
+For this, write a function to generate the address of a symbol:
+const char * symbol_codegen( struct symbol * s );
+•
+Return: a string that is fragment of instruction, representing 
+the address computation needed for a given symbol.
+•
+Examine the scope of the symbol
+•
+Global variables are easy: the name in assembly language 
+is the same as in the source language
+•
+For local variables and function parameters: should return 
+an address computation that yields the position of that 
+local variable or parameter on the stack.
+
+===== [PAGE 110] =====
+Restricted -مقيد
+Generating Expressions
+• Basic approach to generating assembly code for an 
+expression: 
+1. Perform a post-order traversal of AST or DAG
+2. Emit one or more instructions for each node 
+encountered during traversal
+c = a + 3 - b
+where a, b are integers
+
+===== [PAGE 111] =====
+Restricted -مقيد
+Post-order Traversal
+• Left-right-root
+
+===== [PAGE 112] =====
+Restricted -مقيد
+Generating Expressions
+• To generating assembly code for an expression, perform 
+a post-order traversal of AST/DAG, and produce one or 
+more instructions for each node
+• To do this, add a reg field to the AST or DAG node 
+structure, which will hold the number of a register 
+returned by scratch_alloc
+• As you visit each node, emit an instruction and place 
+into the reg field the number of the register containing 
+that value
+• When the node is no longer needed, call scratch_free to 
+release it
+
+===== [PAGE 113] =====
+Restricted -مقيد
+Generating Code
+• Suppose we want to generate X86 code for the following 
+DAG, where a, b and c are global integers
+c = a + 3 - b
+where a, b and c are integers
+
+===== [PAGE 114] =====
+Restricted -مقيد
+Generating Code
+• A post-order traversal would visit the nodes in the 
+following order:
+• Visit the a node. Call scratch_alloc to allocate a new register 
+(0) and save that in node->reg. Then emit the instruction 
+MOVQ a, R0 to load the value into register zero.
+• Visit the 3 node. Call scratch_alloc to allocate a new register 
+(1) and emit the instruction MOVQ $3, R1.
+• Visit the IADD node. By examining the two children of this 
+node, we can see that their values are stored in registers R0 
+and R1, so we emit an instruction that adds them together: 
+ADDQ R0, R1. This is a destructive two-address instruction 
+which leaves the result in R1. R0 is no longer needed, so we 
+call scratch_free(0).
+• Visit the b node. Call scratch_alloc to allocate a new register 
+(0) and emit MOVQ b, R0
+
+===== [PAGE 115] =====
+Restricted -مقيد
+Generating Code
+• A post-order traversal would visit the nodes in the 
+following order:
+• Visit the ISUB node. Emit SUBQ R0, R1, leaving the result in 
+R1, and freeing register R0
+• Visit the c node, but don’t emit anything, because it is the 
+target of the assignment.
+• Visit the ASSIGN node and emit MOVQ R1, c
+
+===== [PAGE 116] =====
+Restricted -مقيد
+Basic Arithmetic
+• Same code with actual register names provided 
+by scratch_name:
+
+===== [PAGE 117] =====
+Restricted -مقيد
+Basic Arithmetic
+• The expression (x*10) would translate as this:
+• Off course, this also means that %rax and %rdx
+cannot be used for other purposes while a multiply 
+is in progress.
+• Since we have a large number of scratch registers 
+to work with, we will just not use %rdx for any other 
+purpose in our basic code generator.
+
+===== [PAGE 118] =====
+Restricted -مقيد
+Generating Code
+• Figure 11.4 gives an example of a DAG representing the 
+expression, a = f(10,b+c)
+
+===== [PAGE 119] =====
+Restricted -مقيد
+Generating Code
+• The code generator must evaluate each of the ARG nodes, computing the value
+of each left-hand child.
+– If the machine has a stack calling convention, then each ARG node corresponds to a PUSH
+onto the stack.
+– If the machine has a register calling convention, generate all of the arguments, then copy
+each one into the appropriate argument register after all arguments are generated.
+• Then, emit CALL on the function name, after saving any caller-saved registers.
+• When the function call returns, move the value from the return register (%rax)
+into a newly allocated scratch register and restore the caller-saved registers.
+
+===== [PAGE 120] =====
+Restricted -مقيد
+Generating Statements
+• Now that we have encapsulated expression generation into a single
+function expr_codegen, we can begin to build up larger code structures
+that rely upon expressions.
+• stmt_codegen will create code for all control flow statements. Begin by
+writing a skeleton for stmt _codegen like this:
+Figure 11.5: Statement Generator Skeleton
+
+===== [PAGE 121] =====
+Restricted -مقيد
+CS477: Compiler Design
+Module 11
+Code Optimization I
+
+===== [PAGE 122] =====
+Restricted -مقيد
+Introduction to Code Optimization
+• Using the basic code generation strategy discussed in the previous module, we
+can build a compiler that will produce perfectly usable, working code.
+• However, if you examine the output of the compiler, there are many obvious
+inefﬁciencies.
+– Due to the fact that the basic code generation considers each program element in isolation
+and so must use the most conservative strategy to connect them together.
+• Optimization is a program transformation technique, which tries to improve the
+code by making it consume less resources (i.e. CPU, Memory etc.) and deliver
+high speed.
+• In optimization, high-level general programming constructs are replaced by
+very efficient low-level programming codes.
+
+===== [PAGE 123] =====
+Restricted -مقيد
+Introduction to Code Optimization
+• In the early days of computing, before code optimization strategies 
+were widespread, code produced by compilers was widely seen as 
+inferior to that hand-written by humans.
+• A modern compiler has many optimization techniques and very 
+detailed knowledge of the underlying architecture
+– Compiled code is usually (if not always) superior to that written by humans.
+• A code optimizing process must follow the three rules given below:
+1. The output code must not, in any way, change the meaning of the program.
+2. Optimization should increase the speed of the program and if possible, the 
+program should demand less number of resources.
+3. Optimization should itself be fast and not delay overall compiling process
+
+===== [PAGE 124] =====
+Restricted -مقيد
+Introduction to Code Optimization
+• Efforts for an optimized code can be made at various levels of the 
+compiling process:
+– At the beginning, users can change/rearrange the code or use better 
+algorithms to write the code.
+– After generating intermediate code, the compiler can modify the 
+intermediate code by address calculations and improving loops.
+– While producing the target machine code, the compiler can make use of 
+memory hierarchy and CPU registers.
+
+===== [PAGE 125] =====
+Restricted -مقيد
+Introduction to Code Optimization
+• Optimizations can be applied at multiple stages of the compiler.
+– Usually best to solve a problem at the highest possible level of abstraction
+• For example:
+– Once we have generated concrete assembly code, about the most we can
+do is eliminate a few redundant instructions.
+•
+In contrast, if we work with a linear IR, we can speed up a long
+code sequence with smart register allocation.
+•
+If we work at the level of a DAG or an AST, we can eliminate entire
+chunks of unused code
+
+===== [PAGE 126] =====
+Restricted -مقيد
+Introduction to Code Optimization
+• Optimizations can occur at different scopes within a program. 
+• Local Optimizations: refer to changes that are limited to a single basic
+block, which is a straight-line sequence of code without any flow control.
+• Global Optimizations: refer to changes applied to the entire body of a
+function (or procedure, method, etc.), consisting of a control-flow-graph
+where each node is a basic block.
+• Inter-procedural Optimizations: even larger, and take into account the
+relationships between different functions.
+• Generally, optimizations at larger scopes are more challenging but
+have more potential to improve the program
+
+===== [PAGE 127] =====
+Restricted -مقيد
+Optimization in Perspective
+.
+• Most production compilers do not perform any major optimizations
+when run with the default options.
+• There are several reasons for this:
+1.
+Compilation time: when initially developing and debugging a program, you want to be
+able to edit, compile, and test many times rapidly. Almost all optimizations require
+additional compilation time, which doesn’t help in the initial program development
+phases
+2.
+Not all optimizations automatically improve a program: they may cause it to use more
+memory, or even run longer!
+3.
+Optimizations can confuse debugging tools: make it difﬁcult to relate program
+execution back to the source code
+
+===== [PAGE 128] =====
+Restricted -مقيد
+• If a program does not run as fast as expected, it is best to stop and 
+think about the program from ﬁrst principles. 
+• Two suggestions to keep in mind: 
+• Examine the overall algorithmic complexity of the program: 
+•
+A binary search (O(log n)) is always going to outperform a linear search (O(n)) for 
+sufficiently large n. 
+•
+Improving the high-level approach of your program is likely to yield much greater 
+benefits than a low-level optimization
+• Measure the performance of your program:
+•
+Use a standard profiling tool like gprof to measure where, exactly, the program spends 
+most of its time
+•
+Then focus efforts on improving that one piece of code by either rewriting it, or 
+enabling the appropriate compiler optimizations
+Optimization in Perspective
+
+===== [PAGE 129] =====
+Restricted -مقيد
+• Most optimizations are designed to target a certain pattern of 
+behavior in code, and so it may be helpful to write the code in those 
+easily-identified patterns
+• Most of the patterns can be performed by hand without the compiler’s help, 
+allowing a head-to-head comparison of different code patterns.
+• The fragments of code presented in this module are all small, and
+only signiﬁcant if performed a large number of times within a
+program
+• Typically happens inside one or more nested loops that constitute the main
+activity of a program, often called the kernel of a computation
+• To measure the cost of, say, multiplying two values together, perform
+it one million times within a timer interval (see Figure 12.1 next slide)
+Optimization in Perspective
+
+===== [PAGE 130] =====
+Restricted -مقيد
+Optimization
+Figure 12.1: Timing a Fast Operation
+Caution
+The timer will count
+not only the action in
+the loop, but also the
+code
+implementing
+the loop, so you need
+to normalize the result
+by
+subtracting
+the
+runtime of an empty
+loop.
+timersub(a,
+b,
+res)
+subtracts
+the
+time
+value in b from the time
+value in a, and places
+the result in the timeval
+pointed to by res. The
+result
+is
+normalized
+such that res->tv_usec
+has
+a
+value
+in
+the
+range 0 to 999,999.
+gettimeofday()
+function
+obtain
+the
+current
+time,
+expressed as seconds
+and
+microseconds
+since the Epoch, and
+store it in the timeval
+structure pointed to by
+tp.
+
+===== [PAGE 131] =====
+Restricted -مقيد
+High Level Optimizations: Constant Folding
+• Good programming practices encourage the use of named constants 
+throughout to clarify the purpose and meaning of values. 
+• For example, instead of writing out the obscure number 86400, one might 
+write out the following expression to yield the same number:
+const int seconds_per_minute=60;
+const int minutes_per_hour=60;
+const int hours_per_day=24;
+int seconds_per_day = seconds_per_minute * minutes_per_hour * hours_per_day;
+• Result is the same (86400) but the code is much clearer about the 
+purpose and origin of that number.
+• However, if translated literally, the program would contain three excess 
+constants, several memory lookups, and two multiplications to obtain the 
+same result.
+
+===== [PAGE 132] =====
+Restricted -مقيد
+High Level Optimizations: Constant Folding
+• Good programming practices encourage the use of named constants 
+throughout to clarify the purpose and meaning of values. 
+• For example, instead of writing out the obscure number 86400, one might 
+write out the following expression to yield the same number:
+const int seconds_per_minute=60;
+const int minutes_per_hour=60;
+const int hours_per_day=24;
+int seconds_per_day = seconds_per_minute * minutes_per_hour * hours_per_day;
+• If done in the inner loop of a complex program, it could be a 
+significant waste.
+• Ideally, it should be possible for the programmer to be verbose without 
+resulting in an inefficient program
+
+===== [PAGE 133] =====
+Restricted -مقيد
+High Level Optimizations: Constant Folding
+• Constant folding converts an expression (or part of an expression) by
+combining multiple constants into a single constant
+– An operator node in the AST with two constant child nodes can be converted into a single
+node with the result of the operation computed in advance.
+– The process can cascade up so that complex expressions may be reduced to a single
+constant.
+• Moves some of the program’s work from execution-time to compile-time.
+– requires using variables of the same precision and dealing with boundary cases such as
+underﬂow, overﬂow, and division by zero.
+• This can be implemented by a recursive function that performs a post order
+traversal of the expression tree.
+• Figure 12.2 shows the pseudo code for constant folding on the AST
+
+===== [PAGE 134] =====
+Restricted -مقيد
+High Level Optimizations: Constant Folding
+• Pseudocode for constant
+folding on the AST.
+
+===== [PAGE 135] =====
+Restricted -مقيد
+High Level Optimizations: Strength Reduction
+• Strength reduction is the technique of converting a special case of
+an expensive operation into a less expensive operation.
+– Example: The expression xy (x^y) for exponentiation on ﬂoating point values
+• Generally, implemented as a call to the function pow(x,y), which might be
+implemented as an expansion of a Taylor series.
+• In
+the
+particular
+case
+of
+xˆ2,
+can
+substitute
+the
+expression
+x*x
+which
+accomplishes the same task
+– Avoids the extra cost of a function call and many loop iterations
+• In a similar way, multiplication/division by any power of two can be
+replaced with a bitwise left/right shift, respectively.
+– For example, x * 8 can be replaced with x<<3
+
+===== [PAGE 136] =====
+Restricted -مقيد
+High Level Optimizations: Strength Reduction
+• Some compilers also contain rules for strength reduction of
+operations in the standard library.
+– For example, recent versions of gcc will substitute a call to printf(s) with
+a constant string s to the equivalent call to puts(s).
+– In this case, the strength reduction comes from reducing the amount of
+code that must be linked into the program:
+• puts is very simple
+• printf has a large number of features and further code dependencies
+
+===== [PAGE 137] =====
+Restricted -مقيد
+High Level Optimizations: Loop Unrolling
+• Loop unrolling is the technique of transforming a loop into another
+that has fewer iterations, but does more work per iteration.
+– The number of repetitions within the loop is known as the unrolling factor.
+• Consider the use of a loop to compute variations of a simple
+expression many times:
+for(i = 0; i < 400; i++) {
+a[i] = i * 2 + 10;
+}
+– In any assembly language, this will only require a few instructions in the loop
+body to compute the value of a[i] each time.
+– Instructions to control the loop will be a signiﬁcant fraction of execution time:
+• Each time through the loop, we must check whether i<400 and jump back to the
+top of the loop
+
+===== [PAGE 138] =====
+Restricted -مقيد
+High Level Optimizations: Strength Reduction
+• The previous for-loop can be safely transformed to:
+• Increasing the work per loop iteration:
+– saves some unnecessary evaluations of i<400
+– eliminates branches from the instruction stream, which avoids pipeline
+stalls and other complexities within the microprocessor
+for(i=0;i<400;i+=4)
+{
+a[i] = i * 2 + 10;
+a[i+1] = (i+1) * 2 + 10;
+a[i+2] = (i+2) * 2 + 10;
+a[i+3] = (i+3) * 2 + 10;
+}
+for(i=0;i<400;i++)
+{
+a[i] = i * 2 + 10; i++;
+a[i] = i * 2 + 10; i++;
+a[i] = i * 2 + 10; i++;
+a[i] = i * 2 + 10;
+}
+OR
+
+===== [PAGE 139] =====
+Restricted -مقيد
+High Level Optimizations: Strength Reduction
+• Tradeoff:
+– As the unrolling factor increases, unnecessary work in the loop structures
+are eliminated.
+– On the other hand, the increasing code size has its own cost:
+• Instead of reading the same instructions over and over again, the processor
+keep loading new instructions from memory.
+• Consequences:
+– If the unrolled loop results in a working set larger than the instruction cache,
+then performance may end worse than the original code.
+
+===== [PAGE 140] =====
+Restricted -مقيد
+High Level Optimizations: Code Hoisting
+• Sometimes, code fragments inside a loop are constant with each
+iteration of the loop.
+– In this case, it is unnecessary to recompute on every iteration and so the
+code can be moved to the block preceding the loop, which is known as code
+hoisting
+• Example:
+array
+index
+in
+the
+following
+example
+is
+constant
+throughout the loop, and can be computed once before loop body:
+for(i=0;i<400;i++){
+a[x * y] += i;
+}
+t=x*y;
+for(i=0;i<400;i++){
+a[t] += i;
+}
+
+===== [PAGE 141] =====
+Restricted -مقيد
+High Level Optimizations: Code Hoisting
+• Code hoisting is a relatively benign optimization when compared to
+loop unrolling
+• The only cost of the optimization is that the computed result must
+occupy:
+– either a temporary location for the duration of the loop (which slightly
+increases either register pressure)
+OR
+– local storage consumption.
+– This is offset by the elimination of unnecessary computation.
+
+===== [PAGE 142] =====
+Restricted -مقيد
+High Level Optimizations: Function Inlining
+• Function inlining is the process of substituting a function call with
+the effect of that function call directly in the code.
+– Particularly useful for brief functions that exist to improve the clarity or
+modularity of code, but do not perform a large amount of computation
+• Example: suppose that the simple function quadratic is called many
+times within a loop:
+int quadratic(int a, int b, int x){
+return a*x*x + b*x + 30;
+}
+for(i=0;i<1000;i++){
+y = quadratic(10, 20, i*2);
+}
+– Overhead of setting up parameters
+and
+calling
+the
+function
+likely
+exceeds the cost of doing handful of
+additions and multiplies within the
+function itself
+– Inlining the function code into the
+loop
+can
+improve
+overall
+performance of the program
+
+===== [PAGE 143] =====
+Restricted -مقيد
+High Level Optimizations: Function Inlining
+• Function inlining is best applied to simple leaf functions that are
+called frequently and do little work relative to the cost of invocation.
+• However, making this determination automatically is challenging to
+get right, because the beneﬁts are relatively clear, but the costs in
+terms of increased code size and duplicated evaluations are not so
+easy to quantify.
+• Due to this, many languages offer a keyword that allow the
+programmer to make this determination manually
+– like inline in C and C++
+
+===== [PAGE 144] =====
+Restricted -مقيد
+High Level Optimizations: Function Inlining
+• Function inlining is best applied to simple leaf functions that are
+called frequently and do little work relative to the cost of invocation.
+• However, making this determination automatically is challenging to
+get right, because the beneﬁts are relatively clear, but the costs in
+terms of increased code size and duplicated evaluations are not so
+easy to quantify.
+• Due to this, many languages offer a keyword that allow the
+programmer to make this determination manually
+– like inline in C and C++
+
+===== [PAGE 145] =====
+Restricted -مقيد
+High Level Optimizations: 
+Dead Code Detection and Elimination
+• A compiled program can contain some code that is completely
+unreachable and will not be executed under any possible input.
+– Possible situations:
+• a mistake by the programmer, who by accident returned from a function before
+the ﬁnal statement.
+• due to the application of multiple optimizations in sequence that eventually
+result in a branch that will never be executed.
+– Either way, the compiler can help by ﬂagging it for the programmer or
+removing it outright.
+• Dead code detection is typically performed on a control ﬂow graph after
+constant folding and other expression optimizations have been performed
+
+===== [PAGE 146] =====
+Restricted -مقيد
+High Level Optimizations: 
+Dead Code Detection and Elimination
+• Example:
+• Both branches of the if statement terminate in a return, and it is
+not possible to reach the ﬁnal print and return statements.
+– This is (likely) a mistake by the programmer and should be ﬂaged
+
+===== [PAGE 147] =====
+Restricted -مقيد
+High Level Optimizations: 
+Dead Code Detection and Elimination
+• Example:
+• Once the control ﬂow graph is created, determining reachability is simple:
+– Perform a traversal of the CFG, starting from the entry point of the function
+– Mark each node as it is visited.
+– Once the traversal is complete, any unmarked nodes are known to be unreachable.
+– The compiler may either generate a suitable error message or simply not generate code
+for the unreachable portion.
+
+===== [PAGE 148] =====
+Restricted -مقيد
+CS477: Compiler Design
+Module 12 
+Code Optimization II
+
+===== [PAGE 149] =====
+Restricted -مقيد
+Low-Level Optimizations
+• Low-level optimizations focus more on the translation of the program structure
+in a way that best exploits the peculiarities of the underlying machine.
+• We will discuss the following optimizations:
+– Peephole optimization
+– Instruction selection
+
+===== [PAGE 150] =====
+Restricted -مقيد
+Peephole Optimizations
+• Peephole optimizations refer to any optimization that looks very narrowly at a
+small section of code (just two or three instructions) and makes a safe,
+focused change within that section.
+– very easy to implement as the final stage of compilation, but have a limited overall effect
+• Local in nature
+• Pattern driven
+• Limited by the size of the window
+
+===== [PAGE 151] =====
+Restricted -مقيد
+Basic Block Level
+• Common Subexpression elimination
+• Constant Propagation
+• Dead code elimination 
+• Plus many others such as copy propagation, value numbering, partial 
+redundancy elimination, …
+
+===== [PAGE 152] =====
+Restricted -مقيد
+Redundant Load Elimination
+• Redundant load elimination is a common peephole optimization.
+• A sequence of expressions that both modifies and uses the same variable
+can easily result in two adjacent instructions that save a register into memory,
+and then immediately load the same value again
+
+===== [PAGE 153] =====
+Restricted -مقيد
+Redundant Load Elimination
+•
+A slight variation is that a load to a different register can be
+converted into a direct move between registers, thus saving an
+unnecessary load and pipeline stall:
+
+===== [PAGE 154] =====
+Restricted -مقيد
+Instruction Selection
+• In Module 10, we discussed a simple method of code generation where each
+node of the AST (or DAG) was replaced with at least one instruction
+• in some cases, multiple instructions
+• In a rich CISC instruction set, a single instruction can easily combine multiple
+operations, such as
+• dereferencing a pointer
+• accessing memory
+• performing an arithmetic operation
+
+===== [PAGE 155] =====
+Restricted -مقيد
+Instruction Selection
+• To exploit these powerful instructions, we can use the technique of
+instruction selection by tree coverage.
+• Idea: first represent each possible instruction in the architecture as a
+template tree, where the leaves of this tree can be registers, constants, or
+memory addresses that can be substituted into an instruction.
+• Example:
+• One variant of the X86 ADDQ instruction can add two registers
+together which can be used to implement an IADD node in the
+DAG, provided the leaves of the IADD are stored in registers.
+• Once the add is complete, the ADDQ places the result in the
+same register as the second argument.
+• This is all expressed as tree fragment that matches a part of
+the DAG, and an instruction to be emitted, once specific
+register numbers are chosen
+
+===== [PAGE 156] =====
+Restricted -مقيد
+Instruction Selection
+.
+• Figure 12.3 (next slide) gives a few more examples of X86 instructions that
+can be represented as tree templates.
+•
+Of course, it is not the complete X86 instruction set.
+•
+To describe even a significant subset would require hundreds of entries, with multiple
+entries per instruction to capture the multiple variations on each instruction.
+• The simple instructions at the top simply substitute one entity in the DAG for
+another:
+•
+MOV $Cj, Ri converts a constant into a register
+•
+MOV Mx, Ri converts a memory location into a register
+• Richer instructions have more structure:
+•
+the complex load MOV Cj(Ri, 8), Ri can be used to represent a combination of add,
+multiply, and dereference.
+
+===== [PAGE 157] =====
+Restricted -مقيد
+Instruction Selection
+
+===== [PAGE 158] =====
+Restricted -مقيد
+• With the complete library of templates written, the job of the code
+generator is to examine the tree for sub-trees that match an
+instruction template.
+• When found, the corresponding instruction is emitted (with appropriate
+substitutions for register, numbers, etc.) and the matching portion of the
+tree replaced with the right side of the template
+• As an example, suppose we wish to generate X86 code for the
+statement:
+a[i] = b + 1;
+• Under assumptions:
+• b is a global variable,
+• a and i are local variables at positions 40 and 32 above the base pointer,
+respectively
+Instruction Selection
+
+===== [PAGE 159] =====
+Restricted -مقيد
+• Step 1: The left IADD should be executed ﬁrst to compute the value of the
+expression. Looking at our table of templates, there is no IADD that can directly
+add a memory location to a constant. So, we instead select rule (2), which emits
+the instruction MOVQ b, %R0 and converts the left-hand side of the template (a
+memory location) into the right-hand side (register %R0).
+Instruction Selection
+• Step 2: Now we can see an IADD
+of a register and a constant, which
+matches the template of rule (4).
+We emit the instruction ADDQ $1,
+%R0 and replace the IADD subtree
+with the register %R0
+
+===== [PAGE 160] =====
+Restricted -مقيد
+• Step 5: Finally, template
+rule (7) matches most of
+what is remaining.
+• Step 3: Now look at the other side of the tree. We can use rule (5) to match the
+entire subtree that loads the variable i from %RBP+32 by emitting the instruction
+MOVQ 32(%RBP), %R1 and replacing the subtree with register %R1
+• Step 4: In a similar way, rule (6) can be used to compute the address of a by
+emitting LEAQ 40(%RBP), %R2. Notice that this is a three-address addition
+specialized for use with a register and the base pointer. Unlike rule 4, it does not
+modify the source register.
+Instruction Selection
+
+===== [PAGE 161] =====
+Restricted -مقيد
+• Under the simple code generation scheme, the 16-node DAG would have
+produced (at least) 16 instructions of output.
+• Using tree coverage, the output is reduced to ﬁve instructions as shown below:
+MOVQ b,%R0
+ADDQ $1,%R0
+MOVQ 32(%RBP),%R1
+LEAQ 40(%RBP),%R2
+MOVQ %R0,(%R2,%R1,8)
+Instruction Selection
+
+===== [PAGE 162] =====
+Restricted -مقيد
+Register Allocation
+• In modern CPUs, on-chip computational speed far outstrips
+memory latency:
+• Thousands of arithmetic operations can be completed in the time it takes
+to perform a single load or store
+• Due to this fact, the class of optimizations that eliminate a load or
+store from memory can have a considerable impact on the
+performance of a program.
+• Eliminating completely unnecessary code and variables is the
+first step towards this
+
+===== [PAGE 163] =====
+Restricted -مقيد
+Register Allocation
+• The next step is to assign specific local variables into registers, so 
+they never need to be loaded from or stored to memory. 
+• Of course, there are a limited number of registers and not every variable 
+can claim one. 
+• The process of register allocation is to identify the variables that 
+are the best candidates for locating in registers instead of memory
+
+===== [PAGE 164] =====
+Restricted -مقيد
+Register Allocation
+• The details of converting a variable into a register are 
+straightforward. 
+• In case where a value is to be loaded from or stored into a memory 
+location, the compiler substitutes the assigned register as the 
+location of the value
+• so that it is used directly as the source or target of an instruction. 
+• More complicated questions are:
+• whether it is safe to registerize a variable?
+• which variables are most important to registerize?
+• which variables can coexist in registers at once? 
+
+===== [PAGE 165] =====
+Restricted -مقيد
+Safety of Register Allocation
+• It is unsafe to registerize a variable if the eliminated memory
+access has some important side effect or visibility outside of the
+code under consideration.
+• Examples of variables that should not be registerized include:
+• Global variables shared between multiple functions or modules
+• Variables used as communication between concurrent threads
+• Variables accessed asynchronously by interrupt handlers
+• Variables used as memory-mapped I/O regions
+
+===== [PAGE 166] =====
+Restricted -مقيد
+Priority of Register Allocation
+• For a small function, it may be possible to registerize all the
+variables, so that memory is not used at all.
+• But for even a moderately complex function (or a CPU that has
+few available registers) it is likely that the compiler must choose
+a limited number of variables to registerize.
+• What strategy should we use to automatically pick variables to
+registerize?
+
+===== [PAGE 167] =====
+Restricted -مقيد
+Priority of Register Allocation
+• Strategy for automatically choosing variables to registerize:
+1. The variables that experience the most number of loads and stores as the
+program runs
+• One could proﬁle an execution of the program
+– Count the memory accesses per variable
+– Then go back and select the top n variables.
+• Of course, that would be a very slow and expensive procedure for optimizing a
+program
+• However, one might conceivably go about it for a very performance-critical
+program
+
+===== [PAGE 168] =====
+Restricted -مقيد
+Priority of Register Allocation
+• Strategy for automatically choosing variables to registerize:
+2. A more reasonable approach would be to score variables via static
+analysis with some simple heuristics
+• In a linear sequence of code, each variable can be directly scored by the number of
+loads and stores it performs:
+– The variable with the highest score is the best candidate.
+– However, a variable access that appears inside a loop is likely to have a much higher
+access count.
+– How large, we cannot say, but we can assume that a loop (and each nesting of a loop)
+multiplies the importance of a variable by a large constant.
+– Multiple-nested loops increase importance in the same way
+
+===== [PAGE 169] =====
+Restricted -مقيد
+Conflicts Between Variables
+• Not every variable needs a distinct register.
+• Two variables can be assigned to the same register if their uses do not
+conflict.
+– To determine this, we must first compute the live ranges of each variable and then
+construct a conflict graph.
+• within a basic block of a linear IR, a variable is live from its first definition
+until its final use.
+– Now, each variable with an overlapping range cannot share the same register, because
+they must exist independently.
+• Conversely, two variables that do not have an overlapping live range can be
+assigned the same register.
+• We can construct a conflict graph where each node in the graph represents
+a variable, and then add edges between nodes whose live ranges overlap
+
+===== [PAGE 170] =====
+Restricted -مقيد
+Register Conflict Graph
+
+===== [PAGE 171] =====
+Restricted -مقيد
+Conflicts Between Variables
+• Register allocation now becomes an instance of the graph coloring
+problem.
+– The goal is to assign each node in the graph a different color (register) such
+that no two adjacent nodes have the same color
+• A planar graph can always be colored with four colors:
+– However, a register conﬂict graph is not necessarily planar, and so may
+require a large number of colors.
+– The general problem of ﬁnding the minimum number of colors needed is NP-
+complete, but there are a number of simpler heuristics that are effective in
+practice
+
+===== [PAGE 172] =====
+Restricted -مقيد
+Conflicts Between Variables
+• A common register allocation approach is to sort the nodes of the
+graph by the number of edges (conﬂicts), and then assign
+registers to the most conﬂicted node ﬁrst.
+– Then, proceeding down the list, assign each node a register that is not
+already taken by an adjacent node.
+– If at any point, number of available registers is zero, then mark that node
+as a non-registerized variable, and continue, because it may be still
+possible to assign registers to nodes with fewer conﬂicts.
+
+===== [PAGE 173] =====
+Restricted -مقيد
+Global Register Allocation
+• To perform global register allocation across an entire function body,
+we must do so in a way that keeps assignments consistent, no
+matter where the control ﬂow leads.
+• To do this, ﬁrst construct the control ﬂow graph for the function:
+– For each variable deﬁnition in the graph, trace the possible forward paths to
+uses of that variable, taking into account multiple paths made possible by
+loops and branches.
+– If there exists a path from deﬁnition to use, then all the basic blocks in that
+path are members of the set of live basic blocks for that variable.
+– Finally, a conﬂict graph may be constructed based on the sets of live blocks:
+• each node represents a variable and its set of live basic blocks
+• each edge represents a conﬂict between two variables whose live sets intersect
+
+===== [PAGE 174] =====
+Restricted -مقيد
+Global Register Allocation - Example
+• To perform register allocation on code (left) consisting of more than a
+basic block
+– Build the control ﬂow graph (middle)
+– Determine the blocks in which a given variable is live
+– Construct a conﬂict graph (right) such that variables sharing a live block are
+in conﬂict, and then color the graph.
+
+===== [PAGE 175] =====
+Restricted -مقيد
+Optimization Pitfalls
+• Be careful of the correctness of optimizations
+– A given piece of code must produce the same result before and after
+optimization, for all possible inputs
+• Be careful not to change external side-effects
+– Many aspects of real programs depend upon the side-effects, not the
+results of a computation
+• Be careful of how optimization changes debugging
+– A program compiled with aggressive optimizations can show surprising
+behavior when run under a debugger
+
+===== [PAGE 176] =====
+Restricted -مقيد
+Optimization Interactions
+• Multiple optimizations can interact with each other in ways that are
+unpredictable.
+• Sometimes, these interactions cascade in positive ways
+– constant folding can support reachability analysis, resulting in dead code
+elimination.
+• On the other hand, optimizations can interact in negative ways:
+– function inlining can result in more complex expressions, resulting in less
+efﬁcient register allocation.
+• To make it worst, one set of optimizations may be very effective on
+one program, but counter-productive on another
+
+===== [PAGE 177] =====
+Restricted -مقيد
+Optimization Interactions
+• A modern optimizing compiler can easily have ﬁfty different
+optimization techniques of varying complexity.
+• If it is only a question of turning each optimization on or off, then
+there are 250 combinations.
+• But, if the optimizations can be applied in any order, there are 50!
+permutations!
+• Question: How can a user decide which optimizations to enable?
+
+===== [PAGE 178] =====
+Restricted -مقيد
+CS477: Compiler Design
+Module 13 
+Memory Organization
+
+===== [PAGE 179] =====
+Restricted -مقيد
+Memory – The Conventional Approach
+• We now discuss structure of internal memory of a running program
+• A program sees memory as a linear sequence of words, each with a
+numeric address starting at zero, and increasing up to max number
+• CPU is free to use memory in any way it sees ﬁt:
+– Code and data could be scattered and intermixed in memory in any order
+– Possible for CPU to modify the memory containing its code while it is running
+• Programming this way would be complex, confusing and difﬁcult to
+debug
+(Example: 4GB on a 32-bit 
+processor.)
+
+===== [PAGE 180] =====
+Restricted -مقيد
+Logical Segmentation
+• Program memory is commonly laid out by separating it into logical
+segments.
+• Each segment is a sequential address range, dedicated to a
+particular purpose within the program.
+• Format of a logical segment:
+
+===== [PAGE 181] =====
+Restricted -مقيد
+Logical Segmentation
+• The code section (also known as the text segment) contains the
+machine code of the program, corresponding to the bodies of
+functions in a C program.
+• The data section contains the global data of the program,
+corresponding to the global variables in a C program.
+– May further be sub-divided into read-write data (variables) and read-only
+data (constants).
+• The heap section contains the heap, which is the area of memory
+that is managed dynamically at runtime by malloc() and free() in a
+C program, or new and delete in other languages.
+– The top of the heap is historically known as the break.
+
+===== [PAGE 182] =====
+Restricted -مقيد
+Logical Segmentation
+• The stack segment contains the stack, which records the current
+execution state of the program as well as the local variables
+currently in use.
+• If a process attempts to access memory in a prohibited way or
+attempts to access the unused area, a page fault occurs.
+• If the access indicates a violation of the logical segmentation of
+the program, then the process is forcibly killed with the error
+message segmentation fault.
+
+===== [PAGE 183] =====
+Restricted -مقيد
+Logical Segmentation
+•
+The heap grows “up” from lower addresses to higher addresses, 
+while the stack grows “down” from higher to lower. 
+•
+In between the two segments is an invalid region of memory that is 
+unused until overtaken by one segment or the other.
+•
+Logical segments on a simple computer (e.g. an embedded 
+microcontroller) are nothing more than organizational convention:
+– Nothing stops the program from using memory improperly. 
+– If the heap grows too large, it can run into the stack segment (or vice versa) 
+•
+the program will crash (if you are lucky) or 
+•
+suffer silent data corruption (if you are unlucky).
+
+===== [PAGE 184] =====
+Restricted -مقيد
+Logical Segmentation
+• On a computer with an OS that uses multiprogramming and memory 
+protection, the situation is better:
+– Each process running in the OS has its own private memory space, with the 
+illusion of starting at address zero and extending to a high address. 
+– As a result, each process can access its own memory arbitrarily, but is 
+prevented from accessing or modifying other processes. 
+– Within its own space, each process lays out its own code, data, heap, and 
+stack segments
+
+===== [PAGE 185] =====
+Restricted -مقيد
+Logical Segmentation
+• In some OSs, when a program is first loaded to memory, 
+permissions are set on each range of memory corresponding to its 
+purpose 
+• Memory corresponding to each segment can be set appropriately: 
+– read-write for data, heap, and stack
+– read-only for constants
+– read-execute for code
+– none for the unused area
+• If a process attempts to access memory in a prohibited way or 
+attempts to access the unused area, a page fault occurs. 
+– it forces a transfer of control to OS, which considers the process and the 
+faulting address. 
+– if the access indicates a violation of the logical segmentation of the program, 
+then the process is forcibly killed with the error message segmentation fault
+
+===== [PAGE 186] =====
+Restricted -مقيد
+Logical Segmentation – The Heap
+• Initially, a process is given a small amount of memory for the heap 
+segment, which it manages internally to implement malloc() and 
+free()
+• If this area is exhausted and the program still needs more, it must 
+explicitly request it from the operating system. 
+• On Unix systems, this is done with the brk system call, which 
+requests that the heap segment be extended to a new address. 
+– If the OS agrees, then it will allocate new pages at the beginning of the 
+invalid area, effectively extending the heap segment. 
+– If the OS does not agree, then brk will return an error code, causing malloc to 
+return an error (indicated as a null pointer) which the program must handle.
+
+===== [PAGE 187] =====
+Restricted -مقيد
+Logical Segmentation – The Stack
+• Similarly, the stack must be able to grow down. 
+• It is not so easy for a program to determine exactly when more stack 
+area is needed, because that happens whenever a new function is 
+invoked, or new local variables are allocated
+• Instead, modern OSs maintain a guard page at the top of the invalid 
+area, adjacent to the current stack
+• When a process attempts to extend the stack into the invalid area, a 
+page fault occurs, and control is transferred to the OS. 
+– If the OS sees that the faulting address is in the guard page, it can simply 
+allocate more pages for the stack, set the page permissions appropriately, 
+and move the guard page down to the new top of the invalid area
+
+===== [PAGE 188] =====
+Restricted -مقيد
+Logical Segmentation – Hardware Implementation
+• Every OS implements policies controlling how much memory any 
+process or user may consume. 
+– If any of these policies are violated, the OS may decline to extend the 
+memory of the process.
+• Idea of breaking a program into segments is so powerful that it was 
+used for many decades to have it implemented in hardware
+– The CPU maintains a table of segments, recording the starting address and 
+length, along with the permissions associated with each segment. 
+– OS would typically set up a hardware segment to correspond to the logical 
+organization
+
+===== [PAGE 189] =====
+Restricted -مقيد
+Logical Segmentation – Hardware Implementation
+•
+Hardware segmentation was widely used in operating systems 
+through the 1980s, it has been largely replaced by paging, which 
+was seen as simpler and more ﬂexible. 
+•
+Processor vendors have responded by removing support for 
+hardware segmentation in new designs. 
+•
+For example:
+– Every generation of the Intel X86 architecture from the 8086 up to the 
+Pentium supported segmentation in 32-bit protected mode. 
+– The latest 64-bit architectures provide only paging facilities, and no 
+segmentation. 
+•
+Logical segmentation continues as a useful way to organize 
+programs in memory.
+
+===== [PAGE 190] =====
+Restricted -مقيد
+Heap Management
+•
+Heap contains memory that is managed dynamically at runtime
+•
+OS does not control the internal organization of the heap, except to limit its
+total size.
+•
+The internal structure of the heap is managed by the standard library or
+other runtime support software that is automatically linked into a program.
+•
+In a C program, the functions malloc() and free() allocate and
+release memory on the heap, respectively.
+•
+In C++, new and delete have the same effect.
+•
+Other languages manipulate the heap implicitly when objects and
+arrays are created and deleted.
+
+===== [PAGE 191] =====
+Restricted -مقيد
+Heap Management
+.
+• The simplest implementation of malloc() and free() is to treat the 
+entire heap as one large linked list of memory regions.
+• Each entry in the list records the state of the region (free or in use), 
+the size of the region, and has pointers to the previous and next 
+regions. 
+• Here’s what that might look like in C:
+
+===== [PAGE 192] =====
+Restricted -مقيد
+• Initial state of heap:
+• Suppose user calls malloc(100) to allocate 100 bytes of memory
+• malloc() will see that the (single) chunk of memory is free, but much
+larger than the requested size.
+• It will split it into one small chunk of 100 bytes and one larger chunk with the
+remainder which is accomplished by simply writing a new chunk header into
+the data area after 100 bytes.
+• Then, connect them together into a linked list:
+Heap Management
+
+===== [PAGE 193] =====
+Restricted -مقيد
+•
+Once the list is modiﬁed, malloc() returns the address of the data
+element within the chunk, so that the user can access it directly
+•
+It does not return the linked list node itself, because the user doesn’t
+need to know about the implementation details.
+•
+If there is no chunk available that is large enough to satisfy the
+current request, then the process must ask the OS to extend the
+heap by calling brk
+•
+When the user calls free() on a chunk of memory, the state of the
+chunk in the linked list is marked FREE, and then merged with
+adjacent nodes, if they are also free
+Heap Management
+
+===== [PAGE 194] =====
+Restricted -مقيد
+•
+If program always frees memory in the opposite order that it was
+allocated, then heap will be nicely split in used and free memory
+•
+In practice, this is not the case:
+•
+Memory can be allocated and freed in any order
+•
+Over time, the heap can degenerate into a mix of oddly sized chunks of
+allocated and freed memory.
+•
+This is known as memory fragmentation
+•
+Excessive fragmentation results in waste:
+•
+If there are many small chunks available, but none of them large enough to
+satisfy the current malloc(), then the process has no choice but to extend
+the heap, leaving the small pieces unused.
+•
+This increases pressure on total virtual memory consumption in the
+operating system.
+Heap Management - Fragmentation
+
+===== [PAGE 195] =====
+Restricted -مقيد
+•
+In C, memory chunks cannot be moved while in use, and so
+fragmentation cannot be ﬁxed after it has already occurred.
+•
+Memory allocator has some limited ability to avoid fragmentation
+by choosing the location of new allocations with care
+•
+Simple strategies to avoid memory fragmentation:
+•
+Best Fit: On each allocation, search the entire linked list and ﬁnd the
+smallest free chunk that is larger than the request.
+•
+Worst Fit: On each allocation, search the entire linked list and ﬁnd the
+largest free chunk that is larger than the request.
+•
+First Fit: On each allocation, search the linked list from the beginning, and
+ﬁnd the ﬁrst fragment (large or small) that satisﬁes the request.
+•
+Next Fit: On each allocation, search the linked list from the last examined
+location, and ﬁnd the next fragment (large or small) that satisﬁes request.
+Heap Management - Fragmentation
+
+===== [PAGE 196] =====
+Restricted -مقيد
+• Stack is used to record the current state of the running program
+• Most CPUs have a specialized register– the stack pointer– which 
+stores the address where the next item will be pushed or popped.
+• Because the stack grows down from the top of memory, there is a 
+confusing convention: 
+• pushing an item on the stack causes the stack pointer to move to a lower 
+memory address 
+• popping an item off the stack causes the stack pointer to move to a higher 
+address
+• This implies that the “top” of the stack is at the lowest address!
+Stack Management
+
+===== [PAGE 197] =====
+Restricted -مقيد
+• Each invocation of a function occupies a range of memory in the 
+stack, known as a stack frame
+• The stack frame contains the parameters and the local variables 
+used by that function. 
+• When a function is called, a new stack frame is pushed
+• When the function returns, the stack frame is popped, and execution 
+continues in the caller’s stack frame
+• A specialized register known as the frame pointer (or sometimes 
+base pointer) indicates the beginning of the current frame
+• Code within a function relies upon the frame pointer to identify the location of 
+the current parameters and local variables
+Stack Management
+
+===== [PAGE 198] =====
+Restricted -مقيد
+• Assume main() function calls function f(), and then f() calls g()
+• If we stop the program in the middle of executing g, the stack would 
+look like this:
+• Order and details of elements in
+a stack frame differ b/w CPU
+architectures and OS:
+• As long as both the caller and the
+callee agree on what goes in the
+stack frame, then any function
+may call another, even if they
+were
+written
+in
+different
+languages, or built by different
+compilers
+Stack Management
+
+===== [PAGE 199] =====
+Restricted -مقيد
+• The agreement on the contents of the activation record is known as 
+a calling convention.
+• This is typically written out in a detailed technical document that is 
+used by the designers of compilers, operating systems, and libraries 
+to ensure that code is mutually interoperable.
+• There are two broad categories of calling conventions:
+• Stack Calling Convention: 
+• put the arguments to a function call on the stack
+• Register Calling Convention: 
+• place the arguments to a function in registers
+Stack Management
+
+===== [PAGE 200] =====
+Restricted -مقيد
+• Conventional approach to calling a function is to push the
+arguments to that function on the stack (in reverse order), and then
+to jump to the address of the function, leaving behind a return
+address on the stack.
+• Most CPUs have a specialized CALL instruction for this purpose.
+• Example, the assembly code to call f(10,20):
+• As a result, the stack frame for f(10,20) :
+Stack Management – Stack Calling Convention
+
+===== [PAGE 201] =====
+Restricted -مقيد
+• An alternate approach to calling a function is to put the arguments
+into registers, and then call the function.
+• For example, suppose that our calling convention indicates that
+registers %R10, %R11, etc are to be used for arguments.
+• Under this calling convention, the assembly code to invoke f(10,20)
+might look like this:
+Stack Management – Register Calling Convention
+
+===== [PAGE 202] =====
+Restricted -مقيد
+Locating Data
+• For each kind of data in a program, there is an unambiguous 
+method of locating it in memory. 
+• The compiler must generate an address computation using the 
+basic information available about the symbol. 
+• The computation varies with the storage class of the data 
+characterized as:
+– Global data
+– Local data
+– Heap data
+
+===== [PAGE 203] =====
+Restricted -مقيد
+Locating Global Data
+• Absolute addressing:
+• Compiler does not compute global addresses, but rather passes the name of
+global symbol to assembler, which then selects the address computation
+• In the simplest case, the assembler will generate an absolute address giving
+the exact location of the data in program memory.
+• Base-relative address:
+• Consists of a base address given by a register plus a ﬁxed offset given by
+the assembler.
+• PC-relative address:
+• The exact distance in bytes between the referring instruction and the target
+data is computed, and then encoded into the instruction
+
+===== [PAGE 204] =====
+Restricted -مقيد
+Locating Data – Local Data and Heap
+• Local data works differently:
+• Because local variables are stored on the stack, a given local variable
+does not necessarily occupy same absolute address each time it is used
+• Variables are speciﬁed as an offset relative to the current frame pointer
+• Function parameters are just a special case of local variables: a
+parameter’s position on the stack is given precisely by its ordinal position
+in the parameters.
+• Heap data can only be accessed by way of pointers that are
+stored as global or local variables.
+• To access data on the heap, the compiler must generate an address
+computation for the pointer itself, then dereference the pointer to reach
+the item on the heap.
+
+===== [PAGE 205] =====
+Restricted -مقيد
+Program Loading
+• Before a program begins executing in memory, it ﬁrst exists as a
+ﬁle on disk, and there must be a convention for loading it into
+memory.
+• There are a variety of executable formats for organizing a program
+on disk, ranging from very simple to very complex.
+• Store an executable as binary blob on disk: program code, data, and
+initial state of heap and stack are simply dumped into one ﬁle without
+distinction
+• a.out executable format (in classic Unix systems): The executable ﬁle
+consists of a short header structure, followed by text, initialized data, and
+symbol table:
+
+===== [PAGE 206] =====
+Restricted -مقيد
+Program Loading
+• There are a variety of executable formats for organizing a program
+on disk, ranging from very simple to very complex.
+• Extensible Linking Format (ELF): used to represent executables, object
+ﬁles, and shared libraries. An ELF ﬁle has multiple sections representing
+code, data, and bss, but it can have an arbitrary number of additional
+sections for debugging data, initialization and ﬁnalization code, metadata
+about the tools used, and so forth
+
+===== [PAGE 207] =====
+Restricted -مقيد
+Good luck
