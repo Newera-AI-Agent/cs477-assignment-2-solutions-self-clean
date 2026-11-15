@@ -14,3 +14,8 @@ Durable session memory for this VM job chain. Each line is one step or wind-down
 - [2026-11-15T14:03:30.416Z | VM 2/3] VERIFIED green: cd "$(git rev-parse --show-toplevel)" && python3 - <<'PY' import json,re d=json.load(open('work/extracted/slides_pages.json')) pages=d['pages'] print('elem type
 - [2026-11-15T14:03:57.153Z | VM 2/3] VERIFIED green: cd "$(git rev-parse --show-toplevel)" && python3 - <<'PY' import re txt=open('work/extracted/slides_text.txt',encoding='utf-8').read() parts=re.split(r'\n?=====
 - [2026-11-15T14:58:34.187Z | VM 2/3] ABORT (model endpoint failure) at step 33 — handoff written for resume.
+- [2026-11-15T15:10:57.290Z | VM 1/3] boot: VM 1/3 online (job vm-mwhz1sjk-abi2c3ms, 180 min budget)
+- [2026-11-15T15:10:57.290Z | VM 1/3] self-check PASS: shell: VERIFIED (the harness executed bash on this VM at boot); node: v24.22.2; npm: 11.19.1; python3: Python 3.14.4; git: repo checked out @ 7cc06e5; browser: Google Chrome 157.0.8103.50 available — the browser_* tools drive it (playwright-core installs on first browser call); filesystem: WRITABLE 
+- [2026-11-15T15:13:55.224Z | VM 1/3] VERIFIED green: cd "$(git rev-parse --show-toplevel)" && python3 - <<'PY' import re txt=open('work/extracted/slides_text.txt',encoding='utf-8').read() parts=re.split(r'\n?=====
+- [2026-11-15T15:41:25.125Z | VM 1/3] VERIFIED green: cd "$(git rev-parse --show-toplevel)" && python3 - <<'PY' import re txt=open('work/extracted/slides_text.txt',encoding='utf-8').read() parts=re.split(r'===== \[
+- [2026-11-15T16:15:39.420Z | VM 1/3] ABORT (model endpoint failure) at step 29 — handoff written for resume.

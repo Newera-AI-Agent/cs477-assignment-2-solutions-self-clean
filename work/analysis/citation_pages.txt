@@ -1,0 +1,351 @@
+===== [p2] =====
+Restricted -مقيد
+Intermediate Representations (IR)
+•
+Most
+production
+compilers
+make
+use
+of
+an
+intermediate
+representation (IR) that lies between the abstract structure of the
+source language and the concrete structure of the target (assembly)
+language.
+•
+An IR is designed to have a simple and regular structure that facilitates
+optimization, analysis, and efficient code generation.
+•
+A modular compiler often implements each optimization or analysis
+tool as a separate module that consumes and produces the same IR
+•
+So that it is easy to select and compose optimizations in different orders.
+Parser
+Static
+Checker
+Intermediate 
+Code Generator
+Code 
+Generator
+Front end
+Back end
+
+===== [p3] =====
+Restricted -مقيد
+Why IR?
+• While generating machine code directly from source code is possible, it 
+entails two problems.
+• With m languages and n target machines, we need to write m front 
+ends, m×n optimizers, and m×n code generators.
+– The code optimizer which is one of the largest and very-difficult-to-write 
+components of a compiler, cannot be reused. 
+• By converting source code to an intermediate code, a machine-
+independent code optimizer may be written 
+– This means just m front ends, n code generators and 1 optimizer
+
+===== [p5] =====
+Restricted -مقيد
+Different Types of IR
+• Intermediate code must be easy to produce and easy to translate to 
+machine code.
+• A sort of universal assembly language, should not contain any machine-specific 
+parameters (registers, addresses, etc.)
+• The type of intermediate code deployed is based on the application
+• Quadruples, triples, indirect triples, abstract syntax trees are the classical 
+forms used for machine-independent optimizations and machine code 
+generation.
+
+===== [p7] =====
+Restricted -مقيد
+Introduction
+• Intermediate code is the interface between front end and back end in 
+a compiler
+• Ideally, the details of source language are confined to the front end 
+and the details of target machines to the back end (a m×n model)
+• We now study intermediate representations, static type checking and 
+intermediate code generation
+Parser
+Static
+Checker
+Intermediate 
+Code Generator
+Code 
+Generator
+Front end
+Back end
+
+===== [p8] =====
+Restricted -مقيد
+Overview
+• Intermediate representations span the gap between the source and target 
+languages:
+• closer to target language;
+• (more or less) machine independent;
+• allows many optimizations to be done in a machine-independent way.
+• Implementable via syntax directed translation, so can be folded into the 
+parsing process.
+
+===== [p9] =====
+Restricted -مقيد
+Types of Intermediate Languages
+• High Level Representations (e.g., syntax trees):
+– closer to the source language
+– easy to generate from an input program
+– code optimizations may not be straightforward.
+• Low Level Representations (e.g., 3-address code, RTL):
+– closer to the target machine;
+– easier for optimizations, final code generation;
+
+===== [p11] =====
+Restricted -مقيد
+IR Structure
+• There are many different kinds of IR that can be used; 
+• Some are very close to the AST we used up to this point, while others 
+are only a very short distance from the target assembly language.
+• We will examine different approaches to IRs and consider their 
+strengths and weaknesses.
+
+===== [p12] =====
+Restricted -مقيد
+Abstract Syntax Tree
+• AST  can be a usable IR, if the goal is simply to emit assembly language 
+without a great deal of optimization or other transformations
+• Once type-checking is complete, simple optimizations like strength 
+reduction and constant folding can be applied to the AST itself.
+• Then, to generate assembly language, simply perform a post-order 
+traversal of the AST and emit a few assembly instructions 
+corresponding to each node.
+
+===== [p13] =====
+Restricted -مقيد
+Abstract Syntax Tree
+• However, in a production compiler, the AST isn’t a great choice for IR, 
+mainly because the structure is too rich. 
+• Each node has a large number of different options and substructure: 
+– for example, an addition node could represent an integer addition, a floating 
+point addition, a Boolean-or, or a string concatenation, depending on the types 
+of the values involved. 
+• This makes it difficult to perform robust transformations, as well as to 
+generate an external representation. 
+• A more low-level representation is needed.
+
+===== [p14] =====
+Restricted -مقيد
+Directed Acyclic Graph
+• The directed acyclic graph (DAG) is one step simplified from the AST.
+• A DAG is similar to the AST, except that it can have an arbitrary graph
+structure, and the individual nodes are greatly simplified, so that there
+is little or no auxiliary information beyond the type and value of each
+node.
+• This requires that we have a greater number of node types, each one
+explicit about its purpose.
+• For example, Figure 8.1 shows a definition of a DAG data structure that
+would be compatible with our project compiler
+
+===== [p16] =====
+Restricted -مقيد
+Directed Acyclic Graph
+•
+Now suppose we compile a simple expression like x=(a+10)*(a+10). 
+•
+The AST representation of this expression would directly capture the 
+syntactic structure
+• After performing type-checking, we may 
+learn that a is a floating point value, and 
+thus 10 must be converted to a float prior 
+to performing floating point arithmetic. 
+• In addition, the computation a+10 need 
+only be performed once, and the resulting 
+value used twice.
+
+===== [p17] =====
+Restricted -مقيد
+Directed Acyclic Graph
+• All of that can be represented with the 
+following DAG, 
+– It introduces a new type of node ITOF to perform 
+integer-to-float conversion, and 
+– nodes FADD and FMUL to perform floating point 
+arithmetic:
+
+===== [p18] =====
+Restricted -مقيد
+Directed Acyclic Graph
+• It is also common for a DAG to represent address 
+computations related to pointers and arrays in greater detail, so 
+that they can be shared and optimized, where possible. 
+• For example, the array lookup x=a[i] would have a very simple 
+representation in the AST:
+
+===== [p19] =====
+Restricted -مقيد
+Directed Acyclic Graph
+• However, array lookup is actually accomplished 
+by adding the starting address of the array a
+with the index of the item i multiplied by the 
+size of objects in the array, determined by 
+consulting the symbol table. 
+• This could be expressed in a DAG like this:
+• As a final step before code generation, the DAG might 
+be expanded to include the address computations for 
+local variables.
+
+===== [p20] =====
+Restricted -مقيد
+Control Flow Graph
+• It is important to note that a DAG by itself is suitable for encoding 
+expressions, but it isn’t as effective for control flow or other ordered 
+program structures.
+• Common sub-expressions are combined under the assumption that they 
+can be evaluated in any order (consistent with operator precedence) 
+and the values already in the DAG do not change. 
+• This assumption does not hold when we consider multiple statements 
+that modify values, or control flow structures that repeat or skip 
+statements.
+
+===== [p22] =====
+Restricted -مقيد
+Control Flow Graph
+• A control flow graph represents the higher-level structure of the 
+program. 
+• The control flow graph is a directed graph (possibly cyclic) where each 
+node of the graph consists of a basic block of sequential statements. 
+• The edges of the graph represent the possible flows of control 
+between basic blocks. 
+• A conditional construct (like if or switch) results in branches in the 
+graph, while a loop construct (like for or while) results in reverse edges
+
+===== [p23] =====
+Restricted -مقيد
+For example, this bit of code
+Would result in this control 
+flow graph
+Control Flow Graph
+
+===== [p24] =====
+Restricted -مقيد
+Control Flow Graph
+• Note that the control flow graph has a different structure than the AST. 
+• The AST for a for-loop would have each of the control expressions as an 
+immediate child of the loop node, whereas the control flow graph places 
+each one in the order it would be executed in practice. 
+• Likewise, the if-statement has edges from each branch of the conditional 
+to the following node, so that one can easily trace the flow of execution 
+from one component to the next.
+
+===== [p100] =====
+Restricted -مقيد
+Introduction
+• The final phase of a compiler is code generator
+• It receives an intermediate representation (IR) with supplementary 
+information in symbol table
+• Produces a semantically equivalent target program
+• Code generator main tasks:
+1.
+Instruction selection
+2.
+Register allocation and assignment
+3.
+Instruction ordering
+Front end
+Code 
+Generator
+Code Optimizer
+
+===== [p101] =====
+Restricted -مقيد
+Issues in the Design of Code Generator
+• Most important criterion: produce correct target code
+• Input to the code generator
+– IR + Symbol table
+– Assumptions:
+• Front-end produces low-level IR, i.e. values of names in it can be 
+directly manipulated by the machine instructions.
+• Syntactic and semantic errors have been already detected
+• The target program
+– Common target architectures are RISC, CISC and Stack based 
+machines
+– In this discussion we will use a very simple RISC-like computer with 
+addition of some CISC-like addressing modes
+
+===== [p102] =====
+Restricted -مقيد
+Overview
+• Intermediate representations span the gap between 
+the source and target languages:
+– closer to target language
+– (more or less) machine independent
+– allows many optimizations to be done in a machine-
+independent way
+• Implementable via syntax directed translation, so can 
+be folded into the parsing process.
+
+===== [p125] =====
+Restricted -مقيد
+Introduction to Code Optimization
+• Optimizations can be applied at multiple stages of the compiler.
+– Usually best to solve a problem at the highest possible level of abstraction
+• For example:
+– Once we have generated concrete assembly code, about the most we can
+do is eliminate a few redundant instructions.
+•
+In contrast, if we work with a linear IR, we can speed up a long
+code sequence with smart register allocation.
+•
+If we work at the level of a DAG or an AST, we can eliminate entire
+chunks of unused code
+
+===== [p126] =====
+Restricted -مقيد
+Introduction to Code Optimization
+• Optimizations can occur at different scopes within a program. 
+• Local Optimizations: refer to changes that are limited to a single basic
+block, which is a straight-line sequence of code without any flow control.
+• Global Optimizations: refer to changes applied to the entire body of a
+function (or procedure, method, etc.), consisting of a control-flow-graph
+where each node is a basic block.
+• Inter-procedural Optimizations: even larger, and take into account the
+relationships between different functions.
+• Generally, optimizations at larger scopes are more challenging but
+have more potential to improve the program
+
+===== [p197] =====
+Restricted -مقيد
+• Each invocation of a function occupies a range of memory in the 
+stack, known as a stack frame
+• The stack frame contains the parameters and the local variables 
+used by that function. 
+• When a function is called, a new stack frame is pushed
+• When the function returns, the stack frame is popped, and execution 
+continues in the caller’s stack frame
+• A specialized register known as the frame pointer (or sometimes 
+base pointer) indicates the beginning of the current frame
+• Code within a function relies upon the frame pointer to identify the location of 
+the current parameters and local variables
+Stack Management
+
+===== [p199] =====
+Restricted -مقيد
+• The agreement on the contents of the activation record is known as 
+a calling convention.
+• This is typically written out in a detailed technical document that is 
+used by the designers of compilers, operating systems, and libraries 
+to ensure that code is mutually interoperable.
+• There are two broad categories of calling conventions:
+• Stack Calling Convention: 
+• put the arguments to a function call on the stack
+• Register Calling Convention: 
+• place the arguments to a function in registers
+Stack Management
+
+===== [p200] =====
+Restricted -مقيد
+• Conventional approach to calling a function is to push the
+arguments to that function on the stack (in reverse order), and then
+to jump to the address of the function, leaving behind a return
+address on the stack.
+• Most CPUs have a specialized CALL instruction for this purpose.
+• Example, the assembly code to call f(10,20):
+• As a result, the stack frame for f(10,20) :
+Stack Management – Stack Calling Convention
