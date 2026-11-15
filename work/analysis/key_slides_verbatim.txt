@@ -1,0 +1,610 @@
+===== [p1] =====
+Restricted -مقيد
+CS477: Compiler Design
+Module 6
+Intermediate Representation I
+
+===== [p2] =====
+Restricted -مقيد
+Intermediate Representations (IR)
+•
+Most
+production
+compilers
+make
+use
+of
+an
+intermediate
+representation (IR) that lies between the abstract structure of the
+source language and the concrete structure of the target (assembly)
+language.
+•
+An IR is designed to have a simple and regular structure that facilitates
+optimization, analysis, and efficient code generation.
+•
+A modular compiler often implements each optimization or analysis
+tool as a separate module that consumes and produces the same IR
+•
+So that it is easy to select and compose optimizations in different orders.
+Parser
+Static
+Checker
+Intermediate 
+Code Generator
+Code 
+Generator
+Front end
+Back end
+
+===== [p3] =====
+Restricted -مقيد
+Why IR?
+• While generating machine code directly from source code is possible, it 
+entails two problems.
+• With m languages and n target machines, we need to write m front 
+ends, m×n optimizers, and m×n code generators.
+– The code optimizer which is one of the largest and very-difficult-to-write 
+components of a compiler, cannot be reused. 
+• By converting source code to an intermediate code, a machine-
+independent code optimizer may be written 
+– This means just m front ends, n code generators and 1 optimizer
+
+===== [p4] =====
+Restricted -مقيد
+Why IM Code?
+
+===== [p5] =====
+Restricted -مقيد
+Different Types of IR
+• Intermediate code must be easy to produce and easy to translate to 
+machine code.
+• A sort of universal assembly language, should not contain any machine-specific 
+parameters (registers, addresses, etc.)
+• The type of intermediate code deployed is based on the application
+• Quadruples, triples, indirect triples, abstract syntax trees are the classical 
+forms used for machine-independent optimizations and machine code 
+generation.
+
+===== [p6] =====
+Restricted -مقيد
+Different Types of IR
+• Static Single Assignment form (SSA) is a recent form and enables more 
+effective optimizations 
+• Conditional constant propagation and global value numbering are more 
+effective on SSA Program .
+• Dependence Graph (PDG) is useful in automatic parallelization, 
+instruction scheduling, and software pipelining
+
+===== [p7] =====
+Restricted -مقيد
+Introduction
+• Intermediate code is the interface between front end and back end in 
+a compiler
+• Ideally, the details of source language are confined to the front end 
+and the details of target machines to the back end (a m×n model)
+• We now study intermediate representations, static type checking and 
+intermediate code generation
+Parser
+Static
+Checker
+Intermediate 
+Code Generator
+Code 
+Generator
+Front end
+Back end
+
+===== [p8] =====
+Restricted -مقيد
+Overview
+• Intermediate representations span the gap between the source and target 
+languages:
+• closer to target language;
+• (more or less) machine independent;
+• allows many optimizations to be done in a machine-independent way.
+• Implementable via syntax directed translation, so can be folded into the 
+parsing process.
+
+===== [p9] =====
+Restricted -مقيد
+Types of Intermediate Languages
+• High Level Representations (e.g., syntax trees):
+– closer to the source language
+– easy to generate from an input program
+– code optimizations may not be straightforward.
+• Low Level Representations (e.g., 3-address code, RTL):
+– closer to the target machine;
+– easier for optimizations, final code generation;
+
+===== [p10] =====
+Restricted -مقيد
+IR Structure
+• An IR is designed to have a simple and regular structure that facilitates 
+optimization, analysis, and efficient code generation.
+• It is common for an IR to have a defined external format that can be 
+written out to a file in text form, so that it can be exchanged between 
+unrelated tools
+• Although it may be visible to the determined programmer, it usually 
+isn’t meant to be easily readable. 
+• When loaded into memory, the IR is represented as a data structure, 
+to facilitate algorithms that traverse its structure.
+
+===== [p11] =====
+Restricted -مقيد
+IR Structure
+• There are many different kinds of IR that can be used; 
+• Some are very close to the AST we used up to this point, while others 
+are only a very short distance from the target assembly language.
+• We will examine different approaches to IRs and consider their 
+strengths and weaknesses.
+
+===== [p12] =====
+Restricted -مقيد
+Abstract Syntax Tree
+• AST  can be a usable IR, if the goal is simply to emit assembly language 
+without a great deal of optimization or other transformations
+• Once type-checking is complete, simple optimizations like strength 
+reduction and constant folding can be applied to the AST itself.
+• Then, to generate assembly language, simply perform a post-order 
+traversal of the AST and emit a few assembly instructions 
+corresponding to each node.
+
+===== [p13] =====
+Restricted -مقيد
+Abstract Syntax Tree
+• However, in a production compiler, the AST isn’t a great choice for IR, 
+mainly because the structure is too rich. 
+• Each node has a large number of different options and substructure: 
+– for example, an addition node could represent an integer addition, a floating 
+point addition, a Boolean-or, or a string concatenation, depending on the types 
+of the values involved. 
+• This makes it difficult to perform robust transformations, as well as to 
+generate an external representation. 
+• A more low-level representation is needed.
+
+===== [p19] =====
+Restricted -مقيد
+Directed Acyclic Graph
+• However, array lookup is actually accomplished 
+by adding the starting address of the array a
+with the index of the item i multiplied by the 
+size of objects in the array, determined by 
+consulting the symbol table. 
+• This could be expressed in a DAG like this:
+• As a final step before code generation, the DAG might 
+be expanded to include the address computations for 
+local variables.
+
+===== [p21] =====
+Restricted -مقيد
+Attribute Flow
+• Context-free grammars are not tied to a specific parsing order
+– e.g. Recursive descent, LR parsing
+• Attribute grammars are not tied to a specific evaluation order
+– This evaluation is known as the annotation or decoration of the parse tree
+
+===== [p24] =====
+Restricted -مقيد
+Control Flow Graph
+• Note that the control flow graph has a different structure than the AST. 
+• The AST for a for-loop would have each of the control expressions as an 
+immediate child of the loop node, whereas the control flow graph places 
+each one in the order it would be executed in practice. 
+• Likewise, the if-statement has edges from each branch of the conditional 
+to the following node, so that one can easily trace the flow of execution 
+from one component to the next.
+
+===== [p25] =====
+Restricted -مقيد
+CS477: Compiler Design
+Module 7
+Intermediate Representation II
+
+===== [p26] =====
+Restricted -مقيد
+Control Flow Graph (CFG)
+•
+A Control Flow Graph (CFG) is the graphical representation of control
+flow or computation during the execution of programs or applications.
+•
+Control flow graphs are mostly used in static analysis as well as
+compiler applications, as they can accurately represent the flow inside
+of a program unit.
+•
+The control flow graph was originally developed by Frances E. Allen.
+
+===== [p38] =====
+Restricted -مقيد
+CFG and AST
+• Control flow graph has a different structure than AST 
+– AST for a for-loop would have each of the control expressions as an 
+immediate child of the loop node, whereas the control flow graph places each 
+one in the order it would be executed in practice.
+– The if statement has edges from each branch of the conditional to the 
+following node, so that one can easily trace the flow of execution from one 
+component to the next.
+
+===== [p44] =====
+Restricted -مقيد
+Linear IR
+•
+A linear IR is an ordered sequence of instructions that is closer to the
+final goal of an assembly language.
+•
+It loses some of the flexibility of a DAG (which does not commit to a
+specific ordering) but can capture expressions, statements, and
+control flow all within one data structure.
+
+===== [p45] =====
+Restricted -مقيد
+Linear IR
+•
+There is no universal standard for a linear IR
+•
+Looks like an idealized assembly language with a large(or infinite) number of 
+registers and the usual arithmetic and control flow operations.
+•
+Assume an IR where LOAD and STOR are used to move values 
+between memory and registers, and three-address arithmetic 
+operations read two registers and write to a third, from left to right. 
+•
+Our example expression would look like this:
+
+===== [p46] =====
+Restricted -مقيد
+Linear IR
+• This IR is easy to store efficiently, because each instruction can be a 
+fixed size 4-tuple representing the operation and (max) of three 
+arguments. 
+• The external representation is also straight forward.
+• As the example suggests, it is most convenient to pretend that there 
+are an infinite number of virtual registers, such that every new value 
+computed writes to a new register.
+
+===== [p47] =====
+Restricted -مقيد
+Linear IR
+• In this form, we can easily identify the lifetime of a value by observing the 
+first point where a register is written, and the last point where a register is 
+used.
+• Between those two points, the value of register r1 must be preserved. 
+• For example, the lifetime of %r1 is from instruction 1 to instruction 4.
+
+===== [p48] =====
+Restricted -مقيد
+Stack Machine IR
+• An even more compact intermediate representation is a stack machine 
+IR. 
+• Such a representation is designed to execute on a virtual stack 
+machine that has no traditional registers, but only a stack to hold 
+intermediate registers.
+• A stack machine IR typically has:
+– a PUSH instruction which pushes a variable or literal value on to the stack and 
+– a POP instruction which removes an item and stores it in memory.
+
+===== [p49] =====
+Restricted -مقيد
+Stack Machine IR
+• Binary arithmetic operators (like FADD or FMUL) implicitly pop two 
+values off the stack and push the result on the stack
+• Unary operators (ITOF) pop one value and push one value. 
+• A few utility instructions are needed to manipulate the stack
+– a COPY instruction which pushes a duplicate value on to the stack.
+
+===== [p50] =====
+Restricted -مقيد
+Stack Machine IR
+• To emit a stack machine IR from a DAG, simply perform a post order 
+traversal of the AST and 
+– emit a PUSH for each leaf value, 
+– an arithmetic instruction for each interior node, and 
+– a POP instruction to assign a value to a variable.
+
+===== [p51] =====
+Restricted -مقيد
+Stack Machine IR
+• Our example 
+expression would look 
+like this in a stack 
+machine IR
+•
+If we assume that a has the value 
+5.0, then executing the IR directly 
+would result in this:
+
+===== [p52] =====
+Restricted -مقيد
+•
+A stack machine IR has many advantages.
+•
+More compact than a 3-tuple/4-tuple linear representation, since there is no 
+need to record the details of registers. 
+•
+Straight forward to implement this language in a simple interpreter.
+•
+However, a stack-based IR is more difficult to translate to a
+conventional register-based assembly language, precisely because the
+explicit register names are lost.
+•
+Further transformation or optimization of this form requires that we
+transform the implicit information dependencies in the stack-basic IR
+back into a more explicit form such as a DAG or a linear IR with
+explicit register names.
+Stack Machine IR
+
+===== [p99] =====
+Restricted -مقيد
+CS477: Compiler Design
+Module 10
+Code Generation
+
+===== [p100] =====
+Restricted -مقيد
+Introduction
+• The final phase of a compiler is code generator
+• It receives an intermediate representation (IR) with supplementary 
+information in symbol table
+• Produces a semantically equivalent target program
+• Code generator main tasks:
+1.
+Instruction selection
+2.
+Register allocation and assignment
+3.
+Instruction ordering
+Front end
+Code 
+Generator
+Code Optimizer
+
+===== [p101] =====
+Restricted -مقيد
+Issues in the Design of Code Generator
+• Most important criterion: produce correct target code
+• Input to the code generator
+– IR + Symbol table
+– Assumptions:
+• Front-end produces low-level IR, i.e. values of names in it can be 
+directly manipulated by the machine instructions.
+• Syntactic and semantic errors have been already detected
+• The target program
+– Common target architectures are RISC, CISC and Stack based 
+machines
+– In this discussion we will use a very simple RISC-like computer with 
+addition of some CISC-like addressing modes
+
+===== [p102] =====
+Restricted -مقيد
+Overview
+• Intermediate representations span the gap between 
+the source and target languages:
+– closer to target language
+– (more or less) machine independent
+– allows many optimizations to be done in a machine-
+independent way
+• Implementable via syntax directed translation, so can 
+be folded into the parsing process.
+
+===== [p103] =====
+Restricted -مقيد
+Code Generation
+• The code generated by the compiler is an object
+code of some lower-level programming language
+–For example, assembly language.
+• The source code written in a higher-level language
+is transformed into a lower-level language that
+results in a lower-level object code, which should
+have the following minimum properties:
+It should carry the exact meaning of the source code.
+It should be efficient in terms of CPU usage and memory 
+management.
+
+===== [p104] =====
+Restricted -مقيد
+Supporting Functions
+• The examples will focus on X86-64 assembly
+code, but they are not hard to adapt to ARM and
+other assembly languages as needed.
+• We deﬁne a method for each element of a
+program:
+–decl_codegen will generate code for a declaration
+–stmt_codegen for a statement
+–expr_codegen for an expression, and so on
+• These relationships are shown in Figure 11.1
+
+===== [p110] =====
+Restricted -مقيد
+Generating Expressions
+• Basic approach to generating assembly code for an 
+expression: 
+1. Perform a post-order traversal of AST or DAG
+2. Emit one or more instructions for each node 
+encountered during traversal
+c = a + 3 - b
+where a, b are integers
+
+===== [p112] =====
+Restricted -مقيد
+Generating Expressions
+• To generating assembly code for an expression, perform 
+a post-order traversal of AST/DAG, and produce one or 
+more instructions for each node
+• To do this, add a reg field to the AST or DAG node 
+structure, which will hold the number of a register 
+returned by scratch_alloc
+• As you visit each node, emit an instruction and place 
+into the reg field the number of the register containing 
+that value
+• When the node is no longer needed, call scratch_free to 
+release it
+
+===== [p121] =====
+Restricted -مقيد
+CS477: Compiler Design
+Module 11
+Code Optimization I
+
+===== [p123] =====
+Restricted -مقيد
+Introduction to Code Optimization
+• In the early days of computing, before code optimization strategies 
+were widespread, code produced by compilers was widely seen as 
+inferior to that hand-written by humans.
+• A modern compiler has many optimization techniques and very 
+detailed knowledge of the underlying architecture
+– Compiled code is usually (if not always) superior to that written by humans.
+• A code optimizing process must follow the three rules given below:
+1. The output code must not, in any way, change the meaning of the program.
+2. Optimization should increase the speed of the program and if possible, the 
+program should demand less number of resources.
+3. Optimization should itself be fast and not delay overall compiling process
+
+===== [p124] =====
+Restricted -مقيد
+Introduction to Code Optimization
+• Efforts for an optimized code can be made at various levels of the 
+compiling process:
+– At the beginning, users can change/rearrange the code or use better 
+algorithms to write the code.
+– After generating intermediate code, the compiler can modify the 
+intermediate code by address calculations and improving loops.
+– While producing the target machine code, the compiler can make use of 
+memory hierarchy and CPU registers.
+
+===== [p125] =====
+Restricted -مقيد
+Introduction to Code Optimization
+• Optimizations can be applied at multiple stages of the compiler.
+– Usually best to solve a problem at the highest possible level of abstraction
+• For example:
+– Once we have generated concrete assembly code, about the most we can
+do is eliminate a few redundant instructions.
+•
+In contrast, if we work with a linear IR, we can speed up a long
+code sequence with smart register allocation.
+•
+If we work at the level of a DAG or an AST, we can eliminate entire
+chunks of unused code
+
+===== [p126] =====
+Restricted -مقيد
+Introduction to Code Optimization
+• Optimizations can occur at different scopes within a program. 
+• Local Optimizations: refer to changes that are limited to a single basic
+block, which is a straight-line sequence of code without any flow control.
+• Global Optimizations: refer to changes applied to the entire body of a
+function (or procedure, method, etc.), consisting of a control-flow-graph
+where each node is a basic block.
+• Inter-procedural Optimizations: even larger, and take into account the
+relationships between different functions.
+• Generally, optimizations at larger scopes are more challenging but
+have more potential to improve the program
+
+===== [p127] =====
+Restricted -مقيد
+Optimization in Perspective
+.
+• Most production compilers do not perform any major optimizations
+when run with the default options.
+• There are several reasons for this:
+1.
+Compilation time: when initially developing and debugging a program, you want to be
+able to edit, compile, and test many times rapidly. Almost all optimizations require
+additional compilation time, which doesn’t help in the initial program development
+phases
+2.
+Not all optimizations automatically improve a program: they may cause it to use more
+memory, or even run longer!
+3.
+Optimizations can confuse debugging tools: make it difﬁcult to relate program
+execution back to the source code
+
+===== [p132] =====
+Restricted -مقيد
+High Level Optimizations: Constant Folding
+• Good programming practices encourage the use of named constants 
+throughout to clarify the purpose and meaning of values. 
+• For example, instead of writing out the obscure number 86400, one might 
+write out the following expression to yield the same number:
+const int seconds_per_minute=60;
+const int minutes_per_hour=60;
+const int hours_per_day=24;
+int seconds_per_day = seconds_per_minute * minutes_per_hour * hours_per_day;
+• If done in the inner loop of a complex program, it could be a 
+significant waste.
+• Ideally, it should be possible for the programmer to be verbose without 
+resulting in an inefficient program
+
+===== [p133] =====
+Restricted -مقيد
+High Level Optimizations: Constant Folding
+• Constant folding converts an expression (or part of an expression) by
+combining multiple constants into a single constant
+– An operator node in the AST with two constant child nodes can be converted into a single
+node with the result of the operation computed in advance.
+– The process can cascade up so that complex expressions may be reduced to a single
+constant.
+• Moves some of the program’s work from execution-time to compile-time.
+– requires using variables of the same precision and dealing with boundary cases such as
+underﬂow, overﬂow, and division by zero.
+• This can be implemented by a recursive function that performs a post order
+traversal of the expression tree.
+• Figure 12.2 shows the pseudo code for constant folding on the AST
+
+===== [p134] =====
+Restricted -مقيد
+High Level Optimizations: Constant Folding
+• Pseudocode for constant
+folding on the AST.
+
+===== [p148] =====
+Restricted -مقيد
+CS477: Compiler Design
+Module 12 
+Code Optimization II
+
+===== [p154] =====
+Restricted -مقيد
+Instruction Selection
+• In Module 10, we discussed a simple method of code generation where each
+node of the AST (or DAG) was replaced with at least one instruction
+• in some cases, multiple instructions
+• In a rich CISC instruction set, a single instruction can easily combine multiple
+operations, such as
+• dereferencing a pointer
+• accessing memory
+• performing an arithmetic operation
+
+===== [p161] =====
+Restricted -مقيد
+• Under the simple code generation scheme, the 16-node DAG would have
+produced (at least) 16 instructions of output.
+• Using tree coverage, the output is reduced to ﬁve instructions as shown below:
+MOVQ b,%R0
+ADDQ $1,%R0
+MOVQ 32(%RBP),%R1
+LEAQ 40(%RBP),%R2
+MOVQ %R0,(%R2,%R1,8)
+Instruction Selection
+
+===== [p178] =====
+Restricted -مقيد
+CS477: Compiler Design
+Module 13 
+Memory Organization
+
+===== [p205] =====
+Restricted -مقيد
+Program Loading
+• Before a program begins executing in memory, it ﬁrst exists as a
+ﬁle on disk, and there must be a convention for loading it into
+memory.
+• There are a variety of executable formats for organizing a program
+on disk, ranging from very simple to very complex.
+• Store an executable as binary blob on disk: program code, data, and
+initial state of heap and stack are simply dumped into one ﬁle without
+distinction
+• a.out executable format (in classic Unix systems): The executable ﬁle
+consists of a short header structure, followed by text, initialized data, and
+symbol table:

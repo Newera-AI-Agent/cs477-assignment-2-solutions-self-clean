@@ -1,0 +1,207 @@
+[p1] CS477: Compiler Design | Module 6
+[p2] Intermediate Representations (IR) | •
+[p3] Why IR? | • While generating machine code directly from source code is possible, it
+[p4] Why IM Code?
+[p5] Different Types of IR | • Intermediate code must be easy to produce and easy to translate to
+[p6] Different Types of IR | • Static Single Assignment form (SSA) is a recent form and enables more
+[p7] Introduction | • Intermediate code is the interface between front end and back end in
+[p8] Overview | • Intermediate representations span the gap between the source and target
+[p9] Types of Intermediate Languages | • High Level Representations (e.g., syntax trees):
+[p10] IR Structure | • An IR is designed to have a simple and regular structure that facilitates
+[p11] IR Structure | • There are many different kinds of IR that can be used;
+[p12] Abstract Syntax Tree | • AST  can be a usable IR, if the goal is simply to emit assembly language
+[p13] Abstract Syntax Tree | • However, in a production compiler, the AST isn’t a great choice for IR,
+[p14] Directed Acyclic Graph | • The directed acyclic graph (DAG) is one step simplified from the AST.
+[p15] Directed Acyclic Graph | • A definition of a DAG data structure
+[p16] Directed Acyclic Graph | •
+[p17] Directed Acyclic Graph | • All of that can be represented with the
+[p18] Directed Acyclic Graph | • It is also common for a DAG to represent address
+[p19] Directed Acyclic Graph | • However, array lookup is actually accomplished
+[p20] Control Flow Graph | • It is important to note that a DAG by itself is suitable for encoding
+[p21] Attribute Flow | • Context-free grammars are not tied to a specific parsing order
+[p22] Control Flow Graph | • A control flow graph represents the higher-level structure of the
+[p23] For example, this bit of code | Would result in this control
+[p24] Control Flow Graph | • Note that the control flow graph has a different structure than the AST.
+[p25] CS477: Compiler Design | Module 7
+[p26] Control Flow Graph (CFG) | •
+[p27] Control Flow Graph (CFG) | • It is important to note that a DAG by itself is suitable for encoding
+[p28] Characteristics of Control Flow Graph (CFG) | •
+[p29] Control Flow Graph | • The most commonly used program representation
+[p30] © Aditya P. Mathur 2005 | Basic Blocks: Example
+[p31] © Aditya P. Mathur 2005 | Basic Blocks: Example (contd.)
+[p32] Control Flow Graph (CFG) | • A control flow graph (or flow graph) G is defined as a finite set N of
+[p33] • | In a flow graph of a program, each basic block becomes a node and
+[p34] CFG Example | N={Start, 1, 2, 3, 4, 5, 6, 7,
+[p35] © Aditya P. Mathur 2005 | N={Start, 1, 2, 3, 4, 5, 6, 7,
+[p36] Paths | • Consider a flow graph G=(N, E).
+[p37] © Aditya P. Mathur 2005 | Paths: Sample Paths Through the
+[p38] CFG and AST | • Control flow graph has a different structure than AST
+[p39] CFG Example | • For example, this bit of code
+[p40] CFG Example | • Would result in this control flow
+[p41] Static Single Assignment Form | •
+[p42] Static Single Assignment Form | •
+[p43] Static Single Assignment Form | •
+[p44] Linear IR | •
+[p45] Linear IR | •
+[p46] Linear IR | • This IR is easy to store efficiently, because each instruction can be a
+[p47] Linear IR | • In this form, we can easily identify the lifetime of a value by observing the
+[p48] Stack Machine IR | • An even more compact intermediate representation is a stack machine
+[p49] Stack Machine IR | • Binary arithmetic operators (like FADD or FMUL) implicitly pop two
+[p50] Stack Machine IR | • To emit a stack machine IR from a DAG, simply perform a post order
+[p51] Stack Machine IR | • Our example
+[p52] • | A stack machine IR has many advantages.
+[p53] CS477: Compiler Design | Module 8
+[p54] Assembly Language - Introduction | • In order to build a compiler, working knowledge of at least one kind
+[p55] A Machine’s Own Language | • Understanding how computers work require familiarity with the
+[p56] Example of Machine-Language | • Machine code for program-fragment:
+[p57] Incomprehensible? | • Though possible, it is extremely difficult, tedious (and error-
+[p58] Hence, Assembly Language | • There are two key ideas:
+[p59] Assembly Language | • Many seem to think that assembly language is rather obscure and
+[p60] © Aditya P. Mathur 2005 | X86 and ARM
+[p61] X86 and ARM | • The Intel x86
+[p62] Open-source Assembler Tools | • A given assembly language can have multiple dialects for the same CPU
+[p63] Open-source Assembler Tools | •
+[p64] Open Source Assembler Tools | • then you should see output similar to this in hello.s
+[p65] Assembly Code | •
+[p66] Assembly Code | •
+[p67] Assembly Code | •
+[p68] Assembly Code | • It is also interesting to compile the assembly code into object code,
+[p69] X86 Assembly Language | • X86 is a generic term that refers to the series of microprocessors
+[p70] X86 Assembly Language | • X86-64 is a fine example of CISC (complex instruction set computing).
+[p71] X86 Assembly Language | • The lower eight registers indicate the purpose for which each was
+[p72] Register Structure | • The numbered registers %r8-%r15 have the same structure, but a
+[p73] • The MOV instruction moves data between registers and to and from memory in a | variety of different modes.
+[p74] Basic Arithmetic | • Need four basic arithmetic instructions for compiler:
+[p75] Basic Arithmetic | • The IMUL instruction is a little unusual, because multiplying two
+[p76] The Stack | • Stack is an auxiliary data structure used to record the function
+[p77] The Stack | • To discard the most recent value from stack, just move the stack
+[p78] CS477: Compiler Design | Module 9
+[p79] ARM Assembly | • The ARM processor architecture has a history almost
+[p80] ARM Assembly | • ARM is an example of a Reduced Instruction Set
+[p81] Registers and Data Types | • ARM-32 has a set of 16 general purpose registers, r0-
+[p82] Registers and Data Types | • ARM uses the following suffixes to indicate data sizes.
+[p83] Addressing Modes | • ARM makes the use of two different classes of instructions to move data
+[p84] Addressing Modes | • MOV instruction is used to move a known immediate value into a
+[p85] Addressing Modes | •
+[p86] Addressing Modes | • Both LDR and STR support a variety of addressing
+[p87] Addressing Modes | • The following instructions, which load the address
+[p88] Basic Arithmetic | • ARM offers three-address arithmetic instructions
+[p89] Basic Arithmetic | • Multiplication works the same way, except that multiplying
+[p90] Basic Arithmetic | • The
+[p91] Comparisons and Branches | • The CMP instruction compares two values and
+[p92] Comparisons and Branches | ARM Branch Instructions
+[p93] Comparisons and Branches | • A
+[p94] Comparisons and Branches | • BX instruction branches to the address given in a
+[p95] Comparisons and Branches | • A special feature of the ARM instruction set is
+[p96] The Stack | • The stack is an auxiliary data structure used primarily to
+[p97] The Stack | • The PUSH pseudo-instruction accomplishes the same task but can also
+[p98] The Stack | • Once again this can be done with a single instruction:
+[p99] CS477: Compiler Design | Module 10
+[p100] Introduction | • The final phase of a compiler is code generator
+[p101] Issues in the Design of Code Generator | • Most important criterion: produce correct target code
+[p102] Overview | • Intermediate representations span the gap between
+[p103] Code Generation | • The code generated by the compiler is an object
+[p104] Supporting Functions | • The examples will focus on X86-64 assembly
+[p105] Supporting Functions
+[p106] Supporting Functions | • To generate expressions, some scratch registers are
+[p107] Supporting Functions | • We can set aside each register for a purpose:
+[p108] Supporting Functions | .
+[p109] Supporting Functions | .
+[p110] Generating Expressions | • Basic approach to generating assembly code for an
+[p111] Post-order Traversal | • Left-right-root
+[p112] Generating Expressions | • To generating assembly code for an expression, perform
+[p113] Generating Code | • Suppose we want to generate X86 code for the following
+[p114] Generating Code | • A post-order traversal would visit the nodes in the
+[p115] Generating Code | • A post-order traversal would visit the nodes in the
+[p116] Basic Arithmetic | • Same code with actual register names provided
+[p117] Basic Arithmetic | • The expression (x*10) would translate as this:
+[p118] Generating Code | • Figure 11.4 gives an example of a DAG representing the
+[p119] Generating Code | • The code generator must evaluate each of the ARG nodes, computing the value
+[p120] Generating Statements | • Now that we have encapsulated expression generation into a single
+[p121] CS477: Compiler Design | Module 11
+[p122] Introduction to Code Optimization | • Using the basic code generation strategy discussed in the previous module, we
+[p123] Introduction to Code Optimization | • In the early days of computing, before code optimization strategies
+[p124] Introduction to Code Optimization | • Efforts for an optimized code can be made at various levels of the
+[p125] Introduction to Code Optimization | • Optimizations can be applied at multiple stages of the compiler.
+[p126] Introduction to Code Optimization | • Optimizations can occur at different scopes within a program.
+[p127] Optimization in Perspective | .
+[p128] • If a program does not run as fast as expected, it is best to stop and | think about the program from ﬁrst principles.
+[p129] • Most optimizations are designed to target a certain pattern of | behavior in code, and so it may be helpful to write the code in those
+[p130] Optimization | Figure 12.1: Timing a Fast Operation
+[p131] High Level Optimizations: Constant Folding | • Good programming practices encourage the use of named constants
+[p132] High Level Optimizations: Constant Folding | • Good programming practices encourage the use of named constants
+[p133] High Level Optimizations: Constant Folding | • Constant folding converts an expression (or part of an expression) by
+[p134] High Level Optimizations: Constant Folding | • Pseudocode for constant
+[p135] High Level Optimizations: Strength Reduction | • Strength reduction is the technique of converting a special case of
+[p136] High Level Optimizations: Strength Reduction | • Some compilers also contain rules for strength reduction of
+[p137] High Level Optimizations: Loop Unrolling | • Loop unrolling is the technique of transforming a loop into another
+[p138] High Level Optimizations: Strength Reduction | • The previous for-loop can be safely transformed to:
+[p139] High Level Optimizations: Strength Reduction | • Tradeoff:
+[p140] High Level Optimizations: Code Hoisting | • Sometimes, code fragments inside a loop are constant with each
+[p141] High Level Optimizations: Code Hoisting | • Code hoisting is a relatively benign optimization when compared to
+[p142] High Level Optimizations: Function Inlining | • Function inlining is the process of substituting a function call with
+[p143] High Level Optimizations: Function Inlining | • Function inlining is best applied to simple leaf functions that are
+[p144] High Level Optimizations: Function Inlining | • Function inlining is best applied to simple leaf functions that are
+[p145] High Level Optimizations: | Dead Code Detection and Elimination
+[p146] High Level Optimizations: | Dead Code Detection and Elimination
+[p147] High Level Optimizations: | Dead Code Detection and Elimination
+[p148] CS477: Compiler Design | Module 12
+[p149] Low-Level Optimizations | • Low-level optimizations focus more on the translation of the program structure
+[p150] Peephole Optimizations | • Peephole optimizations refer to any optimization that looks very narrowly at a
+[p151] Basic Block Level | • Common Subexpression elimination
+[p152] Redundant Load Elimination | • Redundant load elimination is a common peephole optimization.
+[p153] Redundant Load Elimination | •
+[p154] Instruction Selection | • In Module 10, we discussed a simple method of code generation where each
+[p155] Instruction Selection | • To exploit these powerful instructions, we can use the technique of
+[p156] Instruction Selection | .
+[p157] Instruction Selection
+[p158] • With the complete library of templates written, the job of the code | generator is to examine the tree for sub-trees that match an
+[p159] • Step 1: The left IADD should be executed ﬁrst to compute the value of the | expression. Looking at our table of templates, there is no IADD that can
+[p160] • Step 5: Finally, template | rule (7) matches most of
+[p161] • Under the simple code generation scheme, the 16-node DAG would have | produced (at least) 16 instructions of output.
+[p162] Register Allocation | • In modern CPUs, on-chip computational speed far outstrips
+[p163] Register Allocation | • The next step is to assign specific local variables into registers, so
+[p164] Register Allocation | • The details of converting a variable into a register are
+[p165] Safety of Register Allocation | • It is unsafe to registerize a variable if the eliminated memory
+[p166] Priority of Register Allocation | • For a small function, it may be possible to registerize all the
+[p167] Priority of Register Allocation | • Strategy for automatically choosing variables to registerize:
+[p168] Priority of Register Allocation | • Strategy for automatically choosing variables to registerize:
+[p169] Conflicts Between Variables | • Not every variable needs a distinct register.
+[p170] Register Conflict Graph
+[p171] Conflicts Between Variables | • Register allocation now becomes an instance of the graph coloring
+[p172] Conflicts Between Variables | • A common register allocation approach is to sort the nodes of the
+[p173] Global Register Allocation | • To perform global register allocation across an entire function body,
+[p174] Global Register Allocation - Example | • To perform register allocation on code (left) consisting of more than a
+[p175] Optimization Pitfalls | • Be careful of the correctness of optimizations
+[p176] Optimization Interactions | • Multiple optimizations can interact with each other in ways that are
+[p177] Optimization Interactions | • A modern optimizing compiler can easily have ﬁfty different
+[p178] CS477: Compiler Design | Module 13
+[p179] Memory – The Conventional Approach | • We now discuss structure of internal memory of a running program
+[p180] Logical Segmentation | • Program memory is commonly laid out by separating it into logical
+[p181] Logical Segmentation | • The code section (also known as the text segment) contains the
+[p182] Logical Segmentation | • The stack segment contains the stack, which records the current
+[p183] Logical Segmentation | •
+[p184] Logical Segmentation | • On a computer with an OS that uses multiprogramming and memory
+[p185] Logical Segmentation | • In some OSs, when a program is first loaded to memory,
+[p186] Logical Segmentation – The Heap | • Initially, a process is given a small amount of memory for the heap
+[p187] Logical Segmentation – The Stack | • Similarly, the stack must be able to grow down.
+[p188] Logical Segmentation – Hardware Implementation | • Every OS implements policies controlling how much memory any
+[p189] Logical Segmentation – Hardware Implementation | •
+[p190] Heap Management | •
+[p191] Heap Management | .
+[p192] • Initial state of heap: | • Suppose user calls malloc(100) to allocate 100 bytes of memory
+[p193] • | Once the list is modiﬁed, malloc() returns the address of the data
+[p194] • | If program always frees memory in the opposite order that it was
+[p195] • | In C, memory chunks cannot be moved while in use, and so
+[p196] • Stack is used to record the current state of the running program | • Most CPUs have a specialized register– the stack pointer– which
+[p197] • Each invocation of a function occupies a range of memory in the | stack, known as a stack frame
+[p198] • Assume main() function calls function f(), and then f() calls g() | • If we stop the program in the middle of executing g, the stack would
+[p199] • The agreement on the contents of the activation record is known as | a calling convention.
+[p200] • Conventional approach to calling a function is to push the | arguments to that function on the stack (in reverse order), and then
+[p201] • An alternate approach to calling a function is to put the arguments | into registers, and then call the function.
+[p202] Locating Data | • For each kind of data in a program, there is an unambiguous
+[p203] Locating Global Data | • Absolute addressing:
+[p204] Locating Data – Local Data and Heap | • Local data works differently:
+[p205] Program Loading | • Before a program begins executing in memory, it ﬁrst exists as a
+[p206] Program Loading | • There are a variety of executable formats for organizing a program
+[p207] Good luck
